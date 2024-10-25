@@ -1,0 +1,16 @@
+.program beep
+    set pindirs, 1
+.wrap_target
+    set pins, 1 [31]
+
+    set x, 31 [31]
+loop1:    
+    jmp x--, loop1 [31]
+
+    set pins, 0 [31]
+
+    set x, 31 [31]
+loop2:
+    jmp x--, loop2 [31]
+.wrap
+    

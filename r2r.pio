@@ -1,0 +1,5 @@
+.program r2r
+
+.wrap_target
+    out pins, 32           
+.wrap 

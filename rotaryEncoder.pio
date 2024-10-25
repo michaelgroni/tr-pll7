@@ -1,0 +1,18 @@
+.program rotary
+    wait 1 pin 0
+.wrap_target
+loop:
+    wait 0 pin 0
+    wait 1 pin 0
+    jmp pin down
+
+;up:
+    in pins, 1 ; in 1 
+    push block 
+    jmp loop
+
+down:
+    mov isr, ~null ; in -1
+    push block
+.wrap ; jmp loop
+    

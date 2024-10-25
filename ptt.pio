@@ -1,0 +1,16 @@
+.program ptt
+.origin 0
+   set pindirs, 1
+.wrap_target
+public enable:
+   jmp pin pttoff
+   set pins, 1 ; ptt on
+   jmp enable
+pttoff:
+   set pins, 0 ; ptt off
+.wrap
+public disable:
+   set pins, 0 ; ptt off
+   jmp disable
+
+    
