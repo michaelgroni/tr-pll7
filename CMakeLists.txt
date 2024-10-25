@@ -65,6 +65,9 @@ target_link_libraries(settings pico_stdlib hardware_i2c hardware_spi hardware_pi
 add_library(I2Cinput I2Cinput.cpp)
 target_link_libraries(I2Cinput settings pico_stdlib hardware_i2c hardware_spi hardware_pio hardware_timer)
 
+add_library(I2Coutput I2Coutput.cpp)
+target_link_libraries(I2Coutput settings pico_stdlib hardware_i2c)
+
 add_library(TrxState TrxState.cpp)
 target_link_libraries(TrxState pico_stdlib hardware_i2c settings hardware_spi hardware_pio I2Cinput)
 
@@ -81,8 +84,8 @@ target_link_libraries(memory settings TrxState GPIOoutput pico_stdlib hardware_f
 add_library(GPIOinput GPIOinput.cpp)
 target_link_libraries(GPIOinput settings pico_stdlib hardware_spi hardware_pio GPIOoutput)
 
-add_library(ADF4351 ADF4351.cpp)
-target_link_libraries(ADF4351 settings pico_stdlib hardware_spi hardware_pio)
+add_library(AD5932 AD5932.cpp)
+target_link_libraries(AD5932 settings pico_stdlib hardware_spi hardware_pio I2Cinput I2Coutput)
 
 add_library(TrxStateSpecialMemory TrxStateSpecialMemory.cpp)
 target_link_libraries(TrxStateSpecialMemory TrxState)
@@ -161,7 +164,7 @@ target_link_libraries(tr-pll70
         GPIOoutput
         I2Cinput
         settings
-        ADF4351
+        AD5932
         Scanner
         TrxStateScanMin
         TrxStateScanMax

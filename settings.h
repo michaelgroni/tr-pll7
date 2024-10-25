@@ -51,9 +51,10 @@ inline const uint8_t CONTROL_IC1_ADDR = 36;
 
 // SPI PLL
 inline const auto SPI_PORT = spi0;
-inline const uint8_t PLL_SPI_SCK = 6; // SCLK
-inline const uint8_t PLL_SPI_TX = 7;  // MOSI
-inline const uint8_t PLL_OUT_LE = 4;
+inline const uint8_t DDS_SPI_SCK = 6; // SCLK
+inline const uint8_t DDS_SPI_TX = 7;  // MOSI
+inline const uint8_t DDS_OUT_LE = 4;
+inline const auto DDS_MCLK = 39000000; // Hz
 
 // PIOs
 inline const auto ROTARY_PIO = pio0;

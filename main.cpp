@@ -15,7 +15,7 @@
 #include "I2Cinput.h"
 #include "GPIOinput.h"
 #include "GPIOoutput.h"
-#include "ADF4351.h"
+#include "AD5932.h"
 #include "Scanner.h"
 #include "core1.h"
 #include "setup.h"
@@ -277,7 +277,7 @@ int main()
 
         if (currentState->getCurrentFrequency() != 0) // no unused memory channel
         {
-            ADF4351::getInstance()->write(currentState->getCurrentFrequency()); // pll
+            AD5932::getInstance()->write(currentState->getCurrentFrequency()); // pll
         }
 
         bool txAllowed = currentState->isTxAllowed() && !scanner.isOn();
