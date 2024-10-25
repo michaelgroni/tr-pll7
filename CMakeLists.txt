@@ -3,8 +3,9 @@
 cmake_minimum_required(VERSION 3.13)
 
 set(CMAKE_C_STANDARD 11)
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set(PICO_CXX_ENABLE_RTTI 1)
 
 # Initialise pico_sdk from installed location
 # (note this can come from environment, CMake cache etc)
@@ -54,6 +55,7 @@ target_include_directories(tr-pll70 PRIVATE
   ${CMAKE_CURRENT_LIST_DIR}/.. # for our common lwipopts or any other standard includes, if required
 )
 
+
 add_subdirectory(pico-ssd1306) # OLED 
 target_link_libraries(tr-pll70 pico_ssd1306 hardware_i2c)
 
@@ -70,6 +72,7 @@ add_library(TrxStateVfo TrxStateVfo.cpp)
 target_link_libraries(TrxStateVfo TrxState memory pico_stdlib hardware_i2c hardware_spi hardware_pio)
 
 add_library(GPIOoutput GPIOoutput.cpp)
+pico_generate_pio_header(GPIOoutput ${CMAKE_CURRENT_LIST_DIR}/ctcss.pio) 
 target_link_libraries(GPIOoutput settings TrxState pico_stdlib hardware_timer hardware_pio hardware_clocks)
 
 add_library(memory memory.cpp)
@@ -135,8 +138,13 @@ add_library(TrxStateSpecialMemoryFIR TrxStateSpecialMemoryFIR.cpp)
 target_link_libraries(TrxStateSpecialMemoryFIR TrxStateSpecialMemory)
 
 add_library(core1 core1.cpp)
+pico_generate_pio_header(core1 ${CMAKE_CURRENT_LIST_DIR}/r2r.pio)
 target_link_libraries(core1 pico_stdlib hardware_adc settings Fir Median)
  
+pico_generate_pio_header(setup ${CMAKE_CURRENT_LIST_DIR}/rotaryEncoder.pio)
+pico_generate_pio_header(GPIOoutput ${CMAKE_CURRENT_LIST_DIR}/beep.pio)
+pico_generate_pio_header(setup ${CMAKE_CURRENT_LIST_DIR}/ptt.pio)
+
 
 # Add any user requested libraries
 target_link_libraries(tr-pll70
@@ -164,10 +172,6 @@ target_link_libraries(tr-pll70
         core1
         )
 
+
 pico_add_extra_outputs(tr-pll70)
 
-pico_generate_pio_header(setup ${CMAKE_CURRENT_LIST_DIR}/rotaryEncoder.pio)
-pico_generate_pio_header(GPIOoutput ${CMAKE_CURRENT_LIST_DIR}/beep.pio)
-pico_generate_pio_header(tr-pll70 ${CMAKE_CURRENT_LIST_DIR}/ctcss.pio) 
-pico_generate_pio_header(setup ${CMAKE_CURRENT_LIST_DIR}/ptt.pio)
-pico_generate_pio_header(core1 ${CMAKE_CURRENT_LIST_DIR}/r2r.pio)

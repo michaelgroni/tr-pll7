@@ -22,7 +22,7 @@ void ADF4351::write(const uint32_t frequency)
 
         double nPll = fPll / 20000.0;
         uint32_t intPll = (int) nPll;
-        uint fracPll = (int) (2000 * (nPll - intPll));
+        uint fracPll = (int) (1000 * (nPll - intPll));
         uint32_t r0value = (intPll << 15) + (fracPll << 3);
 
         // write R5
@@ -30,7 +30,7 @@ void ADF4351::write(const uint32_t frequency)
         writePLL(r5);
 
         // write R4
-        uint8_t r4[] = {0x00, 0x30, 0x10, 0x24};
+        uint8_t r4[] = {0x00, 0x3F, 0xF0, 0x3C};
         writePLL(r4);
         
   
@@ -39,23 +39,21 @@ void ADF4351::write(const uint32_t frequency)
         writePLL(r3);
     
         // write R2
-        uint8_t r2[] = {0x18, 0xFA, 0x22, 0x42};
+        uint8_t r2[] = {0x19, 0x3E, 0xAE, 0x42};
         writePLL(r2);        
   
         // write R1
-        uint8_t r1[] = {0x00, 0x00, 0x86, 0x41};
+        uint8_t r1[] = {0x00, 0x00, 0x81, 0x91};
         writePLL(r1);
        
         // write R0
-        uint8_t r0[] = {0x59, 0x2E, 0x00, 0x00};
+        uint8_t r0[4];
+        uint8_t* fake8bit = (uint8_t*) &r0value;
+        for (size_t i = 0; i<4; i++)
+        {
+            r0[3-i] = *(fake8bit+i);
+        }
         writePLL(r0);
-        // uint8_t r0[4];
-        // uint8_t* fake8bit = (uint8_t*) &r0value;
-        // for (size_t i = 0; i<4; i++)
-        // {
-        //     r0[3-i] = *(fake8bit+i);
-        // }
-        // writePLL((uint8_t*) &r0);
    }
 }
 

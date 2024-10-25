@@ -10,7 +10,7 @@
     set pins, 1 [7] ; 40°
     set pins, 0 [1]
 
-    set pins, 1 [8] ; 60° 
+    set pins, 1 [8] ; 60°  
     set pins, 0
     
     set pins, 1 [19] ; 80° + 100°   
