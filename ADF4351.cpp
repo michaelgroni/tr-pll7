@@ -22,7 +22,7 @@ void ADF4351::write(const uint32_t frequency)
 
         double nPll = fPll / 20000.0;
         uint32_t intPll = (int) nPll;
-        uint fracPll = (int) (1000 * (nPll - intPll));
+        uint fracPll = (int) (2000 * (nPll - intPll));
         uint32_t r0value = (intPll << 15) + (fracPll << 3);
 
         // write R5
@@ -30,20 +30,20 @@ void ADF4351::write(const uint32_t frequency)
         writePLL(r5);
 
         // write R4
-        uint8_t r4[] = {0x00, 0x3F, 0xF0, 0x3C};
+        uint8_t r4[] = {0x00, 0x30, 0x12, 0x3C};
         writePLL(r4);
         
   
         // write R3
-        uint8_t r3[] = {0x00, 0x00, 0x04, 0xB3};
+        uint8_t r3[] = {0x00, 0x04, 0x04, 0xB3};
         writePLL(r3);
     
         // write R2
-        uint8_t r2[] = {0x19, 0x3E, 0xAE, 0x42};
+        uint8_t r2[] = {0x19, 0x3E, 0xBE, 0x42};
         writePLL(r2);        
   
         // write R1
-        uint8_t r1[] = {0x00, 0x00, 0x81, 0x91};
+        uint8_t r1[] = {0x08, 0x00, 0xBE, 0x81};
         writePLL(r1);
        
         // write R0
