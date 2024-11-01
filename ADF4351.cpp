@@ -30,16 +30,16 @@ void ADF4351::write(const uint32_t frequency)
         writePLL(r5);
 
         // write R4
-        uint8_t r4[] = {0x00, 0x30, 0x12, 0x3C};
+        uint8_t r4[] = {0x00, 0x30, 0x10, 0x3C};
         writePLL(r4);
         
   
         // write R3
-        uint8_t r3[] = {0x00, 0x04, 0x04, 0xB3};
+        uint8_t r3[] = {0x00, 0x00, 0x04, 0xB3};
         writePLL(r3);
     
         // write R2
-        uint8_t r2[] = {0x19, 0x3E, 0xBE, 0x42};
+        uint8_t r2[] = {0x19, 0x3E, 0x9E, 0x42};
         writePLL(r2);        
   
         // write R1
