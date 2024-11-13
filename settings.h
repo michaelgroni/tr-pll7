@@ -33,7 +33,7 @@ inline const uint32_t SCANNER_WAIT_QSO_TIME = 4000;
 inline const uint32_t SCANNER_WAIT_PLL_TIME = 5; // wait for PLL and squelch before checking the scanner stop signal
 inline const uint32_t SCANNER_WAIT_SQUELCH_TIME = 70;
 
-// I2C bus
+// I2C0 bus
 inline const uint8_t I2C_SDA = 0;
 inline const uint8_t I2C_SCL = 1;
 inline const uint I2C_CLOCK = 400000;
@@ -49,11 +49,10 @@ inline const uint8_t ENCODER_IC1_ADDR = 32;
 inline const uint8_t ENCODER_IC2_ADDR = 33;
 inline const uint8_t CONTROL_IC1_ADDR = 36;
 
-// SPI PLL
-inline const auto SPI_PORT = spi0;
-inline const uint8_t PLL_SPI_SCK = 6; // SCLK
-inline const uint8_t PLL_SPI_TX = 7;  // MOSI
-inline const uint8_t PLL_OUT_LE = 4;
+// I²C1 bus PLL
+inline const uint8_t PLL_I2C1_SDA = 6; // SCLK
+inline const uint8_t PLL_I2C1_SCL = 7;  // MOSI
+// inline const uint8_t PLL_OUT_LE = 4;
 
 // PIOs
 inline const auto ROTARY_PIO = pio0;
