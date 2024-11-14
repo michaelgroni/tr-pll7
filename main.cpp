@@ -102,7 +102,7 @@ int main()
                 currentState = &trxStateScanMin;
                 displayChanged = true;
             }
-            
+
             if (updown != 0)
             {
                 currentState->up(updown);
@@ -122,13 +122,13 @@ int main()
                 currentState = &trxStateScanMax;
                 displayChanged = true;
             }
-            
+
             if (updown != 0)
             {
                 currentState->up(updown);
                 displayChanged = true;
             }
-            
+
             if (I2Cinput::getInstance()->wasPressedM())
             {
                 Piezo::getInstance()->beepOK();
@@ -157,7 +157,7 @@ int main()
                 // queue_add_blocking(&filterConfigQueue, &firConfig);
             }
             break;
-        default: // no special memory channel active
+        default:                                        // no special memory channel active
             if (I2Cinput::getInstance()->isPressedMR()) // memory read switch
             {
                 if (currentState != &memories)
@@ -165,7 +165,7 @@ int main()
                     currentState = &memories;
                     displayChanged = true;
                 }
-                
+
                 if (!memories.isWriteModeOn()) // write mode is off
                 {
                     if (I2Cinput::getInstance()->wasPressedM())
@@ -258,7 +258,6 @@ int main()
                     currentState->up(updown);
                     displayChanged = true;
                 }
-                
             }
             else // PTT pressed
             // The VFO wheel and the UP/DOWN buttons should work always in SSB and CW.
@@ -273,7 +272,6 @@ int main()
             Display::getInstance()->update(*currentState, scanner);
             displayChanged = false;
         }
-        
 
         if (currentState->getCurrentFrequency() != 0) // no unused memory channel
         {

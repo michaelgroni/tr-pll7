@@ -6,8 +6,6 @@
 
 #include "hardware/i2c.h"
 
-#include <array>
-
 const uint8_t I2C1_ADDR = 0x30;
 
 Si5351 *Si5351::getInstance()
@@ -23,6 +21,40 @@ void Si5351::write(const uint32_t frequency)
     if (fPll != oldPllFrequency)
     {
         oldPllFrequency = fPll;
+        sleep_ms(5);
+        // wait until Si5351 is initialized
+        uint8_t siRegister = 0;
+        uint8_t siData;
+        do
+        {
+            i2c_write_blocking(i2c1, I2C1_ADDR, &siRegister, 1, true);
+            i2c_read_blocking(i2c1, I2C1_ADDR, &siData, 1, false);
+        } while ( (siData & 0x80) != 0);
+
+        uint8_t allOutputsOff[2] = {3, 0xFF};
+        i2c_write_blocking(i2c1, I2C1_ADDR, allOutputsOff, 2, false);
+
+        uint8_t disableOEBcontrol[2] = {9, 0xFF};
+        i2c_write_blocking(i2c1, I2C1_ADDR, disableOEBcontrol, 2, false);
+
+        // write register map
+        i2c_write_blocking(i2c1, I2C1_ADDR, registerMap.data(), registerMap.size(), false);
+
+        // PLLA and PLLB soft reset
+        siRegister = 177;
+        siData = 0xAC;
+        i2c_write_blocking(i2c1, I2C1_ADDR, &siRegister, 1, true);
+        i2c_write_blocking(i2c1, I2C1_ADDR, &siData, 1, false);
+
+        // enable output 0
+        siRegister = 3;
+        siData = 0xFE;
+        i2c_write_blocking(i2c1, I2C1_ADDR, &siRegister, 1, true);
+        i2c_write_blocking(i2c1, I2C1_ADDR, &siData, 1, false);
+    }
+
+    /*
+
 
         double nPll = fPll / 20000.0;
         uint32_t intPll = (int)nPll;
@@ -57,268 +89,11 @@ void Si5351::write(const uint32_t frequency)
             r0[3 - i] = *(fake8bit + i);
         }
         writePLL(r0);
-    }
+    */
 }
 
 Si5351::Si5351()
 {
-    i2c_init(i2c1, I2C_CLOCK);
-    gpio_set_function(PLL_I2C1_SDA, GPIO_FUNC_I2C);
-    gpio_set_function(PLL_I2C1_SCL, GPIO_FUNC_I2C);
-    gpio_pull_up(PLL_I2C1_SDA);
-    gpio_pull_up(PLL_I2C1_SCL);
-
-    std::array<uint8_t, 233> registerMap = {
-        0x00,
-        0x00,
-        0x18,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x4F,
-        0x80,
-        0x80,
-        0x80,
-        0x80,
-        0x80,
-        0x80,
-        0x80,
-        0x00,
-        0x00,
-        0x02,
-        0x71,
-        0x00,
-        0x0C,
-        0x9C,
-        0x00,
-        0x01,
-        0x24,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x01,
-        0x00,
-        0x02,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x30,
-        0x00,
-        0xD2,
-        0x60,
-        0x60,
-        0x00,
-        0xC0,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x0D,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-    };
-
-    const uint8_t firstRegister = 0;
-    i2c_write_blocking(i2c1, I2C1_ADDR, &firstRegister, 1, true);
-    i2c_write_blocking(i2c1, I2C1_ADDR, registerMap.data(), registerMap.size(), false);
-
-    // PLLA and PLLb soft reset
-    uint8_t addr = 177;
-    uint8_t data = 0xAC;
-    i2c_write_blocking(i2c1, I2C1_ADDR, &addr, 1, true);
-    i2c_write_blocking(i2c1, I2C1_ADDR, &data, 1, false);
-
-    // enable output 0
-    addr = 3;
-    data = 0xFE;
-    i2c_write_blocking(i2c1, I2C1_ADDR, &addr, 1, true);
-    i2c_write_blocking(i2c1, I2C1_ADDR, &data, 1, false);
 }
 
 uint32_t Si5351::pllFrequency(uint32_t frequency)
@@ -335,7 +110,7 @@ uint32_t Si5351::pllFrequency(uint32_t frequency)
         break;
     }
 
-    return (frequency + 21600000) + 5;
+    return (frequency + 21600000) / 5;
 }
 
 void Si5351::writePLL(const uint8_t *values)
