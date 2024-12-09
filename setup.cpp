@@ -11,12 +11,6 @@ void setupI2C()
     gpio_set_function(I2C_SCL, GPIO_FUNC_I2C);
     gpio_pull_up(I2C_SDA);
     gpio_pull_up(I2C_SCL);
-
-    i2c_init(i2c1, I2C_CLOCK);
-    gpio_set_function(PLL_I2C1_SDA, GPIO_FUNC_I2C);
-    gpio_set_function(PLL_I2C1_SCL, GPIO_FUNC_I2C);
-    gpio_pull_up(PLL_I2C1_SDA);
-    gpio_pull_up(PLL_I2C1_SCL);
 }
 
 void setupGPIOinput()

@@ -36,7 +36,7 @@ inline const uint32_t SCANNER_WAIT_SQUELCH_TIME = 70;
 // I2C0 bus
 inline const uint8_t I2C_SDA = 0;
 inline const uint8_t I2C_SCL = 1;
-inline const uint I2C_CLOCK = 400000;
+inline const uint I2C_CLOCK = 100000;
 inline const auto I2C_PORT = i2c0;
 
 // I2C OLED display 128 x 32
