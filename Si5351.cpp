@@ -10,8 +10,10 @@
 
 const uint8_t I2C1_ADDR = 0x60;
 
-const double XTAL_FREQ = 25000000;  // Referenzfrequenz (25 MHz)
-const double VCO_FREQ = 730560000; // VCO-Frequenz (fixiert)
+const double XTAL_FREQ = 25000000.0;  // Referenzfrequenz (25 MHz)
+const double msDivider = 14;
+// const double VFO_FREQ {1200000000};
+
 
 Si5351 *Si5351::getInstance()
 {
@@ -23,21 +25,19 @@ void Si5351::write(const uint32_t frequency)
 {
 	auto newF = pllFrequency(frequency);
 
-	if (pllFreq != newF)
+	if (clk0OutputFreq != newF)
 	{
-		pllFreq = newF;
+		clk0OutputFreq = newF;
 
 		uint8_t allOutputsOff[2] = {3, 0xFF};
 		i2c_write_blocking(i2c1, I2C1_ADDR, allOutputsOff, 2, false);
 
-		// Multisynth-Divider (MS)
-		double msDivider = VCO_FREQ / pllFreq;
-		uint32_t msInt, msNum, msDenom;
-		calculateDivider(msDivider, msInt, msNum, msDenom);
-		setMultisynthDivider(0, msInt, msNum, msDenom);
+		// PLL	
+		double feedbackDivider = (clk0OutputFreq*msDivider) / XTAL_FREQ;
+		uint32_t integerPart, numerator, denominator;
+		calculateDivider(feedbackDivider, integerPart, numerator, denominator);
+		setPLL(0, integerPart, numerator, denominator);
 
-		uint8_t pllSoftReset[2] = {177, 0xA0};
-		i2c_write_blocking(i2c1, I2C1_ADDR, pllSoftReset, 2, false);
 		uint8_t enableOutput0[2] = {3, 0xFE};
 		i2c_write_blocking(i2c1, I2C1_ADDR, enableOutput0, 2, false);
 	}
@@ -77,14 +77,18 @@ Si5351::Si5351()
 	// write register map
 	i2c_write_blocking(i2c1, I2C1_ADDR, registerMap1.data(), registerMap1.size(), false);
 	i2c_write_blocking(i2c1, I2C1_ADDR, registerMap2.data(), registerMap2.size(), false);
+	
+	
 
+	// Multisynth-Divider (MS)
+	uint32_t msInt, msNum, msDenom;
+	calculateDivider(msDivider, msInt, msNum, msDenom);
+	setMultisynthDivider(0, msInt, msNum, msDenom);
 
 	// PLL	
-	double feedbackDivider = VCO_FREQ / XTAL_FREQ;
-
+	double feedbackDivider = (clk0OutputFreq*msDivider) / XTAL_FREQ;
 	uint32_t integerPart, numerator, denominator;
 	calculateDivider(feedbackDivider, integerPart, numerator, denominator);
-
 	setPLL(0, integerPart, numerator, denominator);
 	
 
@@ -110,7 +114,7 @@ uint32_t Si5351::pllFrequency(uint32_t frequency)
 		break;
 	}
 
-	return (frequency + 21600000) / 5;
+	return (frequency + 21600000) / 7;
 }
 
 void Si5351::calculateDivider(const double value, uint32_t &integerPart, uint32_t &numerator, uint32_t &denominator)
@@ -132,8 +136,8 @@ void Si5351::setMultisynthDivider(uint8_t channel, uint32_t mult, uint32_t num, 
 
 	msRegisters[0] = 42 + (8 * channel);			// first register to write
 
-	uint16_t p1 = 128 * mult + (128 * num / denom) - 512;
-	uint16_t p2 = 128 * num - denom * (128 * num/denom);	
+	uint32_t p1 = 128 * mult + (128 * num / denom) - 512;
+	uint32_t p2 = 128 * num - denom * (128 * num/denom);	
 
 	msRegisters[1]  = ((denom >> 8) & 0xFF);	// 42
 	msRegisters[2]  = (denom & 0xFF);		  	// 43
@@ -156,8 +160,8 @@ void Si5351::setPLL(uint8_t pll, uint32_t mult, uint32_t num, uint32_t denom)
 
 	pllRegisters[0] = (pll == 0) ? 26 : 34; // first address 26 for PLLA, 34 for PLLB
 
-	uint16_t p1 = 128 * mult + (128 * num / denom) - 512;
-	uint16_t p2 = 128 * num - denom * (128 * num/denom);
+	uint32_t p1 = 128 * mult + (128 * num / denom) - 512;
+	uint32_t p2 = 128 * num - denom * (128 * num/denom);
 
 	// Calculate PLL configuration registers
 	pllRegisters[1]  = ((denom >> 8) & 0xFF);   // P3 PLL_DEN[15:8]
