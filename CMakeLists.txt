@@ -82,7 +82,7 @@ add_library(GPIOinput GPIOinput.cpp)
 target_link_libraries(GPIOinput settings pico_stdlib hardware_spi hardware_pio GPIOoutput)
 
 add_library(Si5351 Si5351.cpp)
-target_link_libraries(Si5351 settings pico_stdlib hardware_i2c hardware_pio)
+target_link_libraries(Si5351 settings pico_stdlib hardware_i2c)
 
 add_library(TrxStateSpecialMemory TrxStateSpecialMemory.cpp)
 target_link_libraries(TrxStateSpecialMemory TrxState)

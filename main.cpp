@@ -15,7 +15,7 @@
 #include "I2Cinput.h"
 #include "GPIOinput.h"
 #include "GPIOoutput.h"
-#include "Si5351.h"
+#include "Si5351.hpp"
 #include "Scanner.h"
 #include "core1.h"
 #include "setup.h"
@@ -48,6 +48,8 @@ int main()
     TrxStateMemories memories;
 
     Scanner scanner;
+
+    Si5351 si5351(i2c1, 0x60, PLL_I2C1_SDA, PLL_I2C1_SCL);
 
     setTxAllowed(false, pttSm);
 
