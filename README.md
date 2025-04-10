@@ -2,6 +2,10 @@
 
 **This project is in beta state.**
 
+## TO DO
+1. Control the Si5351 clock generator.
+2. Add a block diagramm.
+
 ## Quick guide
 The service manual for the radio is helpful when making modifications.
 1. Assemble the circuit boards. Only the 7805 voltage regulator will be installed later.
