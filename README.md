@@ -1,5 +1,7 @@
 # tr-pll70
 
+**This project is in beta state.**
+
 ## Quick guide
 The service manual for the radio is helpful when making modifications.
 1. Assemble the circuit boards. Only the 7805 voltage regulator will be installed later.
