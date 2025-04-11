@@ -3,7 +3,7 @@
 <img src="overview.svg" alt="block diagramm">
 
 ## TO DO
-- Control the Si5351 clock generator.
+- Control the Si5351 clock generator. 
 
 ## Quick guide
 The service manual for the radio is helpful when making modifications.
