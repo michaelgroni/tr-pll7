@@ -1,10 +1,9 @@
 # tr-pll70
-
 **This project is in beta state.**
+<img src="overview.svg" alt="block diagramm">
 
 ## TO DO
-1. Control the Si5351 clock generator.
-2. Add a block diagramm.
+- Control the Si5351 clock generator.
 
 ## Quick guide
 The service manual for the radio is helpful when making modifications.
