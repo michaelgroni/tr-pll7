@@ -1,3 +1,6 @@
 [submodule "pico-ssd1306"]
 	path = pico-ssd1306
 	url = https://github.com/Harbys/pico-ssd1306
+[submodule "rp2040-Si5351"]
+	path = rp2040-Si5351
+	url = https://github.com/michaelgroni/rp2040-Si5351
