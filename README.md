@@ -1,4 +1,9 @@
 # tr-pll70
+**This project is in beta state.**
+<img src="overview.svg" alt="block diagramm">
+
+## TO DO
+- Control the Si5351 clock generator. 
 
 ## Quick guide
 The service manual for the radio is helpful when making modifications.
@@ -21,5 +26,5 @@ Note: If you want to use the STBY socket on the rear panel as an input, it must 
 16. Wire the I²C bus from the CONTROL UNIT to the ENCODER UNIT and from there to the display.
 Connect the TX OFFSET switch to K2 on the CONTROL UNIT.
 17. Remove the HET UNIT. The white wire 8C (connector 5 pin 8) is used for the power supply of the PLL. Apart from this one wire, plugs 5 and 6 can be completely removed.
-18. Attach the PLL board and the low-pass board in the housing of the HET UNIT and connect the data lines of the PLL to the CONTROL UNIT. The 8C line with 8 volts or the 5-volt line from the CONTROL UNIT serves as the power supply. The LD signal (lock detect) can be taken from the pin LD or MUX OUT. With many evaluation boards, it is advisable to replace the oscillator with a more stable one or to use an external TCXO.
-19. The output signal of the PLL is fed to the LT and RT coax cables via the low-pass filter.<br><img src="HET.jpg" alt="PLL evaluation board and low-pass filter" width=50%>
+18. Attach the PLL board and the low-pass board in the housing of the HET UNIT. Connect the data lines and the reference input of the PLL to the CONTROL UNIT. The 8C line with 8 volts or the 5-volt line from the CONTROL UNIT serves as the power supply. The LD signal (lock detect) can be taken from the pin LD or MUX OUT.
+19. The output signal of the PLL is fed to the LT and RT coax cables via the low-pass filter.
