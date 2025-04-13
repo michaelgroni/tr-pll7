@@ -59,6 +59,10 @@ target_include_directories(tr-pll70 PRIVATE
 add_subdirectory(pico-ssd1306) # OLED 
 target_link_libraries(tr-pll70 pico_ssd1306 hardware_i2c)
 
+
+add_subdirectory(rp2040-Si5351)
+target_link_libraries(tr-pll70 rp2040-Si5351)
+
 add_library(settings settings.cpp)
 target_link_libraries(settings pico_stdlib hardware_i2c hardware_spi hardware_pio hardware_flash)
 
@@ -81,7 +85,7 @@ target_link_libraries(memory settings TrxState GPIOoutput pico_stdlib hardware_f
 add_library(GPIOinput GPIOinput.cpp)
 target_link_libraries(GPIOinput settings pico_stdlib hardware_spi hardware_pio GPIOoutput)
 
-add_library(ADF4351 ADF4351.cpp)
+add_library(ADF4351 ADF4351.cpp ImproperFractionSi5351.cpp)
 target_link_libraries(ADF4351 settings pico_stdlib hardware_spi hardware_pio)
 
 add_library(TrxStateSpecialMemory TrxStateSpecialMemory.cpp)

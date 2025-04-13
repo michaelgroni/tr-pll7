@@ -4,6 +4,7 @@
 #include "hardware/pio.h"
 
 #include "pico-ssd1306/ssd1306.h"
+#include "rp2040-Si5351/Si5351.hpp"
 
 #include "settings.h"
 #include "TrxStateVfo.h"
@@ -42,6 +43,9 @@ int main()
 
     auto i2cInput = I2Cinput::getInstance();
 
+    Si5351 si5351;
+    setupSi5351(si5351);
+    
     TrxStateVfo vfoA(VFO_A_INIT);
     TrxStateVfo vfoB(VFO_B_INIT);
 

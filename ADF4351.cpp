@@ -3,8 +3,17 @@
 #include "settings.h"
 #include "I2Cinput.h"
 #include "GPIOinput.h"
+#include "ImproperFractionSi5351.hpp"
 
 #include "hardware/spi.h"
+
+// SI5351 and ADF4351
+const uint_fast32_t F_XO_SI = 27000000;
+const uint_fast32_t F_VCO_SI = 33 * F_XO_SI; // Must bei a multiple of F_XO_SI.
+const uint_fast32_t PFD_ADF = 100000; // 100 kHz
+const uint_fast8_t R_ADF = 100;
+
+using namespace std;
 
 ADF4351* ADF4351::getInstance()
 {
@@ -70,8 +79,18 @@ ADF4351::ADF4351()
     gpio_put(PLL_OUT_LE, 1);
 }
 
-uint32_t ADF4351::pllFrequency(uint32_t frequency)
+uint32_t ADF4351::pllFrequency(uint32_t frequency) const
 {
+    // PLL frequency = 21600000 + frequency + 1500 (USB) or -1500 (LSB)
+    // 21600000 is the offset for the ADF4351 PLL
+    // 1500 is the offset for the I2Cinput mode (USB/LSB)
+
+    if (frequency < 1000000 || frequency > 60000000)
+        return oldPllFrequency; // invalid frequency
+
+    if (frequency == oldPllFrequency)
+        return oldPllFrequency; // no change
+
     auto mode = I2Cinput::getInstance()->getMode();
 
     switch (mode)
@@ -92,4 +111,19 @@ void ADF4351::writePLL(const uint8_t *values)
     gpio_put(PLL_OUT_LE, 0);
     spi_write_blocking(SPI_PORT, values, 4);
     gpio_put(PLL_OUT_LE, 1);
+}
+
+void ADF4351::computeDividers(const uint32_t &pllFrequency,
+    uint_fast8_t &ma, uint_fast32_t &mb, uint_fast32_t &mc, uint_fast16_t nADF) const
+{
+    const int offsetADF = pllFrequency % PFD_ADF;
+    const int freqADF = pllFrequency - offsetADF;
+    nADF = freqADF / PFD_ADF;
+    ImproperFractionSi5351 fRefADF(PFD_ADF * R_ADF, offsetADF * R_ADF, nADF);
+
+    // Si5351 multisynth
+    ImproperFractionSi5351 mMultisynth = ImproperFractionSi5351::divide(F_VCO_SI, fRefADF);
+    ma = mMultisynth.getA();
+    mb = mMultisynth.getB();
+    mc = mMultisynth.getC();
 }
