@@ -4,6 +4,7 @@
 #include "I2Cinput.h"
 #include "GPIOinput.h"
 #include "ImproperFractionSi5351.hpp"
+#include "rp2040-Si5351/Si5351.hpp"
 
 #include "hardware/spi.h"
 
@@ -29,9 +30,20 @@ void ADF4351::write(const uint32_t frequency)
    {
         oldPllFrequency = fPll;
 
-        double nPll = fPll / 8000.0;
-        uint32_t intPll = (int) nPll;
-        uint fracPll = (int) (500 * (nPll - intPll));
+        const uint_fast16_t offsetADF = fPll % PFD_ADF;
+        const uint_fast32_t freqADF = fPll - offsetADF;
+        const uint_fast16_t nADF = freqADF / PFD_ADF;
+        ImproperFractionSi5351 fRefADF(PFD_ADF * R_ADF, offsetADF * R_ADF, nADF);
+
+        // Si5351 multisynth
+        ImproperFractionSi5351 mMultisynth = ImproperFractionSi5351::divide(F_VCO_SI, fRefADF);
+        const auto ma = mMultisynth.getA();     
+        const auto mb = mMultisynth.getB();      // 20 bits
+        const auto mc = mMultisynth.getC();      // 20 bits
+        
+        // TODO to be continued here
+
+        
         uint32_t r0value = (intPll << 15) + (fracPll << 3);
 
         // write R5

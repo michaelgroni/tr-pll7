@@ -1,6 +1,6 @@
 #include "ImproperFractionSi5351.hpp"
 
-constexpr uint32_t ImproperFractionSi5351::gcd(uint32_t x, uint32_t y)
+uint32_t ImproperFractionSi5351::gcd(uint32_t x, uint32_t y)
 {
     if (x==0)
         return y;
@@ -11,7 +11,7 @@ constexpr uint32_t ImproperFractionSi5351::gcd(uint32_t x, uint32_t y)
     return gcd(y, x%y);
 }
 
-constexpr ImproperFractionSi5351::ImproperFractionSi5351(uint32_t a, uint32_t b, uint32_t c)
+ImproperFractionSi5351::ImproperFractionSi5351(uint32_t a, uint32_t b, uint32_t c)
 : a(0), b(0), c(1)
 {
     if (c == 0) return; // division by zero → undefined
@@ -35,10 +35,10 @@ constexpr ImproperFractionSi5351::ImproperFractionSi5351(uint32_t a, uint32_t b,
     this->c = c;
 }
 
-constexpr ImproperFractionSi5351::ImproperFractionSi5351(uint32_t b_, uint32_t c_)
+ImproperFractionSi5351::ImproperFractionSi5351(uint32_t b_, uint32_t c_)
     : ImproperFractionSi5351(0, b_, c_) {}
 
-constexpr ImproperFractionSi5351 ImproperFractionSi5351::add(uint32_t n, const ImproperFractionSi5351& f)
+ImproperFractionSi5351 ImproperFractionSi5351::add(uint32_t n, const ImproperFractionSi5351& f)
 {
     auto a = n + f.getA();
     auto b = f.getB();
@@ -46,7 +46,7 @@ constexpr ImproperFractionSi5351 ImproperFractionSi5351::add(uint32_t n, const I
     return ImproperFractionSi5351(a, b, c);
 }
 
-constexpr ImproperFractionSi5351 ImproperFractionSi5351::divide(uint32_t n, const ImproperFractionSi5351& ipf)
+ImproperFractionSi5351 ImproperFractionSi5351::divide(uint32_t n, const ImproperFractionSi5351& ipf)
 {
     auto a = ipf.getA();
     auto b = ipf.getB();
