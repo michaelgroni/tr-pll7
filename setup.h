@@ -7,4 +7,3 @@ void setupI2C();
 void setupGPIOinput();
 uint setupPTTpio();
 uint setupRotaryPio();
-void setupSi5351(Si5351 &si5351);

@@ -42,9 +42,6 @@ int main()
     auto rotarySm = setupRotaryPio();
 
     auto i2cInput = I2Cinput::getInstance();
-
-    Si5351 si5351;
-    setupSi5351(si5351);
     
     TrxStateVfo vfoA(VFO_A_INIT);
     TrxStateVfo vfoB(VFO_B_INIT);

@@ -9,8 +9,8 @@
 #include "hardware/spi.h"
 
 // SI5351 and ADF4351
-const uint_fast32_t F_XO_SI = 27000000;
-const uint_fast32_t F_VCO_SI = 33 * F_XO_SI; // Must bei a multiple of F_XO_SI.
+const uint_fast32_t F_XO_SI = 25000000;
+const uint_fast32_t F_VCO_SI = 36 * F_XO_SI; // Must bei a multiple of F_XO_SI.
 const uint_fast32_t PFD_ADF = 100000; // 100 kHz
 const uint_fast8_t R_ADF = 100;
 
@@ -40,10 +40,12 @@ void ADF4351::write(const uint32_t frequency)
         const auto ma = mMultisynth.getA();     
         const auto mb = mMultisynth.getB();      // 20 bits
         const auto mc = mMultisynth.getC();      // 20 bits
+
+        si5351.setMultisynth0to5parameters(0, ma, mb, mc);
         
         // TODO to be continued here
 
-        
+        /*
         uint32_t r0value = (intPll << 15) + (fracPll << 3);
 
         // write R5
@@ -75,6 +77,7 @@ void ADF4351::write(const uint32_t frequency)
             r0[3-i] = *(fake8bit+i);
         }
         writePLL(r0);
+        */
    }
 }
 
@@ -89,6 +92,18 @@ ADF4351::ADF4351()
     gpio_init(PLL_OUT_LE);
     gpio_set_dir(PLL_OUT_LE, true); 
     gpio_put(PLL_OUT_LE, 1);
+
+    setupSi5351(si5351);
+}
+
+void ADF4351::setupSi5351(Si5351 &si5351)
+{
+    si5351.setClkControl(0, false, false, 0, false, 3, 8);
+    si5351.setPllInputSource(1);
+    si5351.setPllParameters('a', F_VCO_SI / F_XO_SI, 0, 1033);
+    si5351.setMultisynth0to5parameters(0, 90, 0, 15);
+    si5351.resetPll();
+    si5351.setOutput(0, true);
 }
 
 uint32_t ADF4351::pllFrequency(uint32_t frequency) const
@@ -125,6 +140,7 @@ void ADF4351::writePLL(const uint8_t *values)
     gpio_put(PLL_OUT_LE, 1);
 }
 
+/*
 void ADF4351::computeDividers(const uint32_t &pllFrequency,
     uint_fast8_t &ma, uint_fast32_t &mb, uint_fast32_t &mc, uint_fast16_t nADF) const
 {
@@ -139,3 +155,4 @@ void ADF4351::computeDividers(const uint32_t &pllFrequency,
     mb = mMultisynth.getB();
     mc = mMultisynth.getC();
 }
+*/

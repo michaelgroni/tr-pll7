@@ -54,13 +54,3 @@ uint setupRotaryPio()
     pio_sm_set_enabled(ROTARY_PIO, rotarySm, true);
     return rotarySm;
 }
-
-void setupSi5351(Si5351 &si5351)
-{
-    si5351.setClkControl(0, false, false, 0, false, 3, 8);
-    si5351.setPllInputSource(1);
-    si5351.setPllParameters('a', 35, 0, 1033);
-    si5351.setMultisynth0to5parameters(0, 90, 0, 15);
-    si5351.resetPll();
-    si5351.setOutput(0, true);
-}
