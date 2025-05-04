@@ -4,6 +4,9 @@
 #include "ptt.pio.h"
 #include "rotaryEncoder.pio.h"
 
+const uint8_t I2C_SDA = 0;
+const uint8_t I2C_SCL = 1;
+
 void setupI2C()
 {
     i2c_init(I2C_PORT, I2C_CLOCK);

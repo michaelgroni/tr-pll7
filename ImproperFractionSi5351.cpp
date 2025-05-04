@@ -21,8 +21,8 @@ ImproperFractionSi5351::ImproperFractionSi5351(uint32_t a, uint32_t b, uint32_t 
     this->c = c;
 }
 
-ImproperFractionSi5351::ImproperFractionSi5351(uint32_t b_, uint32_t c_)
-    : ImproperFractionSi5351(0, b_, c_) {}
+ImproperFractionSi5351::ImproperFractionSi5351(uint32_t b, uint32_t c)
+    : ImproperFractionSi5351(0, b, c) {}
 
 uint32_t ImproperFractionSi5351::getA() const
 {

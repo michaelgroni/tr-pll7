@@ -8,6 +8,12 @@
 
 #include "hardware/spi.h"
 
+// SPI PLL
+const auto SPI_PORT = spi0;
+const uint8_t PLL_SPI_SCK = 6; // SCLK
+const uint8_t PLL_SPI_TX = 7;  // MOSI
+const uint8_t PLL_OUT_LE = 4;
+
 // SI5351 and ADF4351
 const uint_fast32_t F_XO_SI = 25000000;
 const uint32_t F_VCO_SI = 36 * F_XO_SI; // Must bei a multiple of F_XO_SI.
@@ -103,17 +109,9 @@ void ADF4351::setupSi5351(Si5351 &si5351)
 
 uint32_t ADF4351::pllFrequency(uint32_t frequency) const
 {
-    // PLL frequency = 21600000 + frequency + 1500 (USB) or -1500 (LSB)
-    // 21600000 is the offset for the ADF4351 PLL
-    // 1500 is the offset for the I2Cinput mode (USB/LSB)
+    // PLL frequency = 21600000 + frequency +1500 (USB) or -1500 (LSB)
 
-    if (frequency < 1000000 || frequency > 60000000)
-        return oldPllFrequency; // invalid frequency
-
-    if (frequency == oldPllFrequency)
-        return oldPllFrequency; // no change
-
-    auto mode = I2Cinput::getInstance()->getMode();
+    const auto mode = I2Cinput::getInstance()->getMode();
 
     switch (mode)
     {
