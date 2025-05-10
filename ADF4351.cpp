@@ -39,10 +39,11 @@ void ADF4351::write(const uint32_t frequency)
         const uint_fast32_t offsetADF = fPll % PFD_ADF;
         const uint_fast32_t freqADF = fPll - offsetADF;
         const uint_fast16_t nADF = freqADF / PFD_ADF;
-        ImproperFractionSi5351 fRefADF(PFD_ADF * R_ADF, offsetADF * R_ADF, nADF);
+        // ImproperFractionSi5351 fRefADF(PFD_ADF * R_ADF, offsetADF * R_ADF, nADF);
+        double fRefADF = R_ADF * (PFD_ADF + (double) offsetADF/nADF);
 
-        // Si5351 multisynth
-        ImproperFractionSi5351 mMultisynth = F_VCO_SI / fRefADF;
+        // Si5351 multisynth      
+        ImproperFractionSi5351 mMultisynth(F_VCO_SI / fRefADF);
         const auto ma = mMultisynth.getA();     
         const auto mb = mMultisynth.getB();      // 20 bits
         const auto mc = mMultisynth.getC();      // 20 bits
@@ -132,20 +133,3 @@ void ADF4351::writePLL(const uint8_t *values)
     spi_write_blocking(SPI_PORT, values, 4);
     gpio_put(PLL_OUT_LE, 1);
 }
-
-/*
-void ADF4351::computeDividers(const uint32_t &pllFrequency,
-    uint_fast8_t &ma, uint_fast32_t &mb, uint_fast32_t &mc, uint_fast16_t nADF) const
-{
-    const int offsetADF = pllFrequency % PFD_ADF;
-    const int freqADF = pllFrequency - offsetADF;
-    nADF = freqADF / PFD_ADF;
-    ImproperFractionSi5351 fRefADF(PFD_ADF * R_ADF, offsetADF * R_ADF, nADF);
-
-    // Si5351 multisynth
-    ImproperFractionSi5351 mMultisynth = ImproperFractionSi5351::divide(F_VCO_SI, fRefADF);
-    ma = mMultisynth.getA();
-    mb = mMultisynth.getB();
-    mc = mMultisynth.getC();
-}
-*/
