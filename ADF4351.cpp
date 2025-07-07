@@ -16,7 +16,8 @@ const uint8_t PLL_OUT_LE = 4;
 
 // SI5351 and ADF4351
 const uint_fast32_t F_XO_SI = 25000000;
-const uint32_t F_VCO_SI = 36 * F_XO_SI; // Must bei a multiple of F_XO_SI.
+// const uint32_t F_VCO_SI = 32 * F_XO_SI; // Must bei a multiple of F_XO_SI.
+const uint_fast8_t M_MULTISYNTH {38};
 const uint_fast32_t PFD_ADF = 100'000; // 100 kHz
 const uint_fast8_t R_ADF = 100;
 
@@ -39,36 +40,37 @@ void ADF4351::write(const uint32_t frequency)
         const uint_fast32_t offsetADF = fPll % PFD_ADF;
         const uint_fast32_t freqADF = fPll - offsetADF;
         const uint_fast16_t nADF = freqADF / PFD_ADF;
-        // ImproperFractionSi5351 fRefADF(PFD_ADF * R_ADF, offsetADF * R_ADF, nADF);
-        double fRefADF = R_ADF * (PFD_ADF + (double) offsetADF/nADF);
+        const double fRefADF = R_ADF * (PFD_ADF + (double) offsetADF/nADF);
 
-        // Si5351 multisynth      
-        ImproperFractionSi5351 mMultisynth(F_VCO_SI / fRefADF);
-        const auto ma = mMultisynth.getA();     
-        const auto mb = mMultisynth.getB();      // 20 bits
-        const auto mc = mMultisynth.getC();      // 20 bits
+        // Si5351 PLL_A      
+        const double nSi5351 = fRefADF / F_XO_SI;
+        ImproperFractionSi5351 nPLL(nSi5351 * M_MULTISYNTH);
+        const auto na = nPLL.getA();     
+        const auto nb = nPLL.getB();      // 20 bits
+        const auto nc = nPLL.getC();      // 20 bits
+        si5351.setPllParameters('a', na, nb, nc);
 
-        si5351.setMultisynth0to5parameters(0, ma, mb, mc);
+        sleep_ms(1); // wait for Si5351 to be ready
 
         // write R5
         uint8_t r5[] = {0x00, 0x58, 0x00, 0x05};
         writePLL(r5);
 
         // write R4
-        uint8_t r4[] = {0x00, 0x30, 0x10, 0x3C};
+        uint8_t r4[] = {0x00, 0x30, 0x24, 0x3C};
         writePLL(r4);
         
   
         // write R3
-        uint8_t r3[] = {0x00, 0x40, 0x04, 0xB3};
+        uint8_t r3[] = {0x00, 0xE0, 0x04, 0xB3};
         writePLL(r3);
     
         // write R2
-        uint8_t r2[] = {0x18, 0x19, 0x0F, 0xC2};
+        uint8_t r2[] = {0x18, 0x19, 0x1F, 0xC2};
         writePLL(r2);        
   
         // write R1
-        uint8_t r1[] = {0x08, 0x00, 0x80, 0x11};
+        uint8_t r1[] = {0x18, 0x00, 0x80, 0x11};
         writePLL(r1);
        
         // write R0
@@ -100,11 +102,11 @@ ADF4351::ADF4351()
 
 void ADF4351::setupSi5351(Si5351 &si5351)
 {
-    si5351.setClkControl(0, false, false, 0, false, 3, 8);
+    si5351.setClkControl(0, false, true, 0, false, 3, 8);
     si5351.setPllInputSource(1);
-    si5351.setPllParameters('a', F_VCO_SI / F_XO_SI, 0, 15);
-    si5351.setMultisynth0to5parameters(0, 90, 0, 15);
+    si5351.setPllParameters('a', 20, 0, 15);
     si5351.resetPll();
+    si5351.setMultisynth0to5parameters(0, M_MULTISYNTH, 0, 15);
     si5351.setOutput(0, true);
 }
 
