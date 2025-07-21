@@ -208,7 +208,12 @@ int main()
                     Piezo::getInstance()->beepError();
                 }
 
-                currentState = I2Cinput::getInstance()->isPressedAB() ? &vfoB : &vfoA; // read vfo switch
+                auto tempState = I2Cinput::getInstance()->isPressedAB() ? &vfoB : &vfoA;
+                if (currentState != tempState)
+                {
+                    currentState = tempState;
+                    displayChanged = true;
+                }
             }
 
             if (wasPressed("rotaryButton") && isPressed("rotaryButton")) // scanner
