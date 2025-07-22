@@ -8,7 +8,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(PICO_CXX_ENABLE_RTTI 1)
 
 # Initialise pico_sdk from installed location
-# note this can come from environment, CMake cache etc
+# (note this can come from environment, CMake cache etc)
 
 # == DO NOT EDIT THE FOLLOWING LINES for the Raspberry Pi Pico VS Code Extension to work ==
 if(WIN32)
@@ -44,7 +44,7 @@ pico_set_program_version(tr-pll70 "0.3")
 # Modify the below lines to enable/disable output over UART/USB
 # pico_enable_stdio_uart(tr-pll70 0)
 # pico_enable_stdio_usb(tr-pll70 0)
- 
+
 # Add the standard library to the build
 target_link_libraries(tr-pll70
         pico_stdlib)
