@@ -2,8 +2,8 @@
 **This project is in beta state.**
 <img src="overview.svg" alt="block diagramm">
 
-## TO DO
-- Control the Si5351 clock generator. 
+## PLL
+Cheap boards with the PLL module ADF4351 are available on the market. Unfortunately, it is difficult to generate a clean signal with a 10 Hz step width at 460 MHz. For this reason, the PLL operates with a step of 100 kHz. A Si5351A clock generator on the CONTOL UNIT generates a reference frequency of around 10 MHz, which is changed in very small steps. This creates a 10 Hz raster at the end frequency.
 
 ## Quick guide
 The service manual for the radio is helpful when making modifications.
