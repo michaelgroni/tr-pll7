@@ -9,7 +9,10 @@ Cheap boards with the PLL module ADF4351 are available on the market. Unfortunat
 <img src="loopFilter.png" alt="loop filter: C1 = 220 pF; C2 = 6.8 nF; C3 = 33 pF; R1 = 11 kOhm; R2 = 68 kOhm; Rset = 5.1 kOhm"> 
 
 ### ADF4351 boards
-Here are a few details about different board variants. As with everything else in this project, there is no guarantee that the information is correct.
+Here are a few details about different board variants. Let's call them <cite>Board 1</cite> and <cite>Board 2</cite>. As with everything else in this project, there is no guarantee that the information is correct.
+
+#### Board 1 v1.4
+<img src="board1 v1.4.png">
 
 ## Quick guide
 The service manual for the radio is helpful when making modifications.
