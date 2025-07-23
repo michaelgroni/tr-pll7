@@ -12,7 +12,7 @@ Cheap boards with the PLL module ADF4351 are available on the market. Unfortunat
 Here are a few details about different board variants. Let's call them <cite>Board 1</cite> and <cite>Board 2</cite>. As with everything else in this project, there is no guarantee that the information is correct.
 
 #### Board 1 v1.4
-<img src="board1 v1.4.png">
+<img src="board 1 v1.4.png">
 
 ## Quick guide
 The service manual for the radio is helpful when making modifications.
