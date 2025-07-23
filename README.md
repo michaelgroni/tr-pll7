@@ -8,6 +8,9 @@ Cheap boards with the PLL module ADF4351 are available on the market. Unfortunat
 ### Proposal for the loop filter
 <img src="loopFilter.png" alt="loop filter: C1 = 220 pF; C2 = 6.8 nF; C3 = 33 pF; R1 = 11 kOhm; R2 = 68 kOhm; Rset = 5.1 kOhm"> 
 
+### ADF4351 boards
+Here are a few details about different board variants. As with everything else in this project, there is no guarantee that the information is correct.
+
 ## Quick guide
 The service manual for the radio is helpful when making modifications.
 1. Assemble the circuit boards. Only the 7805 voltage regulator will be installed later.
