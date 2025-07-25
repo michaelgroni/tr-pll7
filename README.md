@@ -16,6 +16,10 @@ Here are a few details about different board variants. Let's call them *Board 1*
 
 #### Board 1 v.1.5
 <img src="board 1 v1.5 pcb.png"> <img src="board 1 v1.5 schematic.png">
+
+#### Board 2
+<img src="board 2.png">
+
 ## Quick guide
 The service manual for the radio is helpful when making modifications.
 1. Assemble the circuit boards. Only the 7805 voltage regulator will be installed later.
