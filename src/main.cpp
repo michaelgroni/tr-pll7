@@ -22,17 +22,7 @@
 #include "setup.h"
 #include "ptt.pio.h"
 
-void setTxAllowed(const bool allowed, const uint pttSm)
-{
-    if (allowed)
-    {
-        pio_sm_exec(PTT_PIO, pttSm, pio_encode_jmp(ptt_offset_enable));
-    }
-    else
-    {
-        pio_sm_exec(PTT_PIO, pttSm, pio_encode_jmp(ptt_offset_disable));
-    }
-}
+void setTxAllowed(const bool allowed, const uint pttSm);
 
 int main()
 {
@@ -75,6 +65,40 @@ int main()
         // read I²C input
         i2cInput->update(); // must be called in the main loop
 
+        // select state instance
+        TrxState* newState = nullptr;
+        switch (I2Cinput::getInstance()->getSpecialMemoryChannel())
+        {
+            case 1: // special memory scan min
+                newState = &trxStateScanMin;
+                break;
+            case 2: // special memory scan max
+                newState = &trxStateScanMax;
+                break;
+            case 3: // special memory filter
+                if (currentState != &stateFir)
+                {
+                    stateFir.update(currentState);
+                    newState = (TrxState*) &stateFir;
+                }
+                break;
+            default: // no special memory channel active
+                if (I2Cinput::getInstance()->isPressedMR())
+                {
+                    newState = &memories;
+                }
+                else
+                {
+                    newState = I2Cinput::getInstance()->isPressedAB() ? &vfoB : &vfoA;
+                }
+        }
+
+        if (newState != currentState)
+        {
+            currentState = newState;
+            displayChanged = true;
+        }   
+
         // read rotary encoder and up/down buttons
         int updown = readRotaryEncoder(rotarySm);
         updown += readUpDownButtons();
@@ -98,12 +122,6 @@ int main()
         switch (I2Cinput::getInstance()->getSpecialMemoryChannel())
         {
         case 1: // special memory scan min
-            if (currentState != &trxStateScanMin)
-            {
-                currentState = &trxStateScanMin;
-                displayChanged = true;
-            }
-            
             if (updown != 0)
             {
                 currentState->up(updown);
@@ -118,12 +136,6 @@ int main()
             }
             break;
         case 2: // special memory scan max
-            if (currentState != &trxStateScanMax)
-            {
-                currentState = &trxStateScanMax;
-                displayChanged = true;
-            }
-            
             if (updown != 0)
             {
                 currentState->up(updown);
@@ -143,13 +155,6 @@ int main()
                 Piezo::getInstance()->beepError();
             }
 
-            if (currentState != &stateFir)
-            {
-                stateFir.update(currentState);
-                currentState = (TrxState *)&stateFir;
-                displayChanged = true;
-            }
-
             stateFir.up(updown);
             if (stateFir.wasChanged())
             {
@@ -160,13 +165,7 @@ int main()
             break;
         default: // no special memory channel active
             if (I2Cinput::getInstance()->isPressedMR()) // memory read switch
-            {
-                if (currentState != &memories)
-                {
-                    currentState = &memories;
-                    displayChanged = true;
-                }
-                
+            {   
                 if (!memories.isWriteModeOn()) // write mode is off
                 {
                     if (I2Cinput::getInstance()->wasPressedM())
@@ -206,13 +205,6 @@ int main()
                 if (I2Cinput::getInstance()->wasPressedM())
                 {
                     Piezo::getInstance()->beepError();
-                }
-
-                auto tempState = I2Cinput::getInstance()->isPressedAB() ? &vfoB : &vfoA;
-                if (currentState != tempState)
-                {
-                    currentState = tempState;
-                    displayChanged = true;
                 }
             }
 
@@ -289,5 +281,17 @@ int main()
         bool txAllowed = currentState->isTxAllowed() && !scanner.isOn();
         setTxAllowed(true, pttSm);
         // setTxAllowed(txAllowed, pttSm);
+    }
+}
+
+void setTxAllowed(const bool allowed, const uint pttSm)
+{
+    if (allowed)
+    {
+        pio_sm_exec(PTT_PIO, pttSm, pio_encode_jmp(ptt_offset_enable));
+    }
+    else
+    {
+        pio_sm_exec(PTT_PIO, pttSm, pio_encode_jmp(ptt_offset_disable));
     }
 }
