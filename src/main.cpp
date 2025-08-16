@@ -57,7 +57,6 @@ int main()
     multicore_launch_core1(core1_entry);
 
     // main loop
-    bool displayChanged = true;
     while (true)
     {
         sleep_ms(MAIN_LOOP_PAUSE_TIME);
@@ -66,38 +65,31 @@ int main()
         i2cInput->update(); // must be called in the main loop
 
         // select state instance
-        TrxState* newState = nullptr;
         switch (I2Cinput::getInstance()->getSpecialMemoryChannel())
         {
             case 1: // special memory scan min
-                newState = &trxStateScanMin;
+                currentState = &trxStateScanMin;
                 break;
             case 2: // special memory scan max
-                newState = &trxStateScanMax;
+                currentState = &trxStateScanMax;
                 break;
             case 3: // special memory filter
                 if (currentState != &stateFir)
                 {
                     stateFir.update(currentState);
-                    newState = (TrxState*) &stateFir;
+                    currentState = (TrxState*) &stateFir;
                 }
                 break;
             default: // no special memory channel active
                 if (I2Cinput::getInstance()->isPressedMR())
                 {
-                    newState = &memories;
+                    currentState = &memories;
                 }
                 else
                 {
-                    newState = I2Cinput::getInstance()->isPressedAB() ? &vfoB : &vfoA;
+                    currentState = I2Cinput::getInstance()->isPressedAB() ? &vfoB : &vfoA;
                 }
         }
-
-        if (newState != currentState)
-        {
-            currentState = newState;
-            displayChanged = true;
-        }   
 
         // read rotary encoder and up/down buttons
         int updown = readRotaryEncoder(rotarySm);
@@ -108,13 +100,11 @@ int main()
         {
             currentState->stepUp();
             Piezo::getInstance()->beepOK();
-            displayChanged = true;
         }
         if (I2Cinput::getInstance()->wasPressedStepDecrease())
         {
             currentState->stepDown();
             Piezo::getInstance()->beepOK();
-            displayChanged = true;
         }
 
         auto mode = I2Cinput::getInstance()->getMode();
@@ -125,28 +115,24 @@ int main()
             if (updown != 0)
             {
                 currentState->up(updown);
-                displayChanged = true;
             }
 
             if (I2Cinput::getInstance()->wasPressedM())
             {
                 Piezo::getInstance()->beepOK();
                 trxStateScanMin.save();
-                displayChanged = true;
             }
             break;
         case 2: // special memory scan max
             if (updown != 0)
             {
                 currentState->up(updown);
-                displayChanged = true;
             }
             
             if (I2Cinput::getInstance()->wasPressedM())
             {
                 Piezo::getInstance()->beepOK();
                 trxStateScanMax.save();
-                displayChanged = true;
             }
             break;
         case 3: // special memory filter
@@ -159,7 +145,6 @@ int main()
             if (stateFir.wasChanged())
             {
                 firConfig = stateFir.getConfig();
-                displayChanged = true;
                 // queue_add_blocking(&filterConfigQueue, &firConfig);
             }
             break;
@@ -172,7 +157,6 @@ int main()
                     {
                         Piezo::getInstance()->beepOK();
                         memories.setWriteModeOn(true);
-                        displayChanged = true;
                     }
                 }
                 else // write mode is on
@@ -182,19 +166,16 @@ int main()
                         TrxStateVfo *lastVfo = I2Cinput::getInstance()->isPressedAB() ? &vfoB : &vfoA;
                         saveMemory(memories.getMemoryIndex(), lastVfo->toMemory());
                         memories.setWriteModeOn(false);
-                        displayChanged = true;
                     }
                     else if (I2Cinput::getInstance()->isPressedAB())
                     {
                         deleteMemory(memories.getMemoryIndex());
                         memories.setWriteModeOn(false);
-                        displayChanged = true;
                     }
                     else if (I2Cinput::getInstance()->isPressedPtt() || wasPressed("rotaryButton") && isPressed("rotaryButton")) // leave write mode withut saving
                     {
                         Piezo::getInstance()->beepError();
                         memories.setWriteModeOn(false);
-                        displayChanged = true;
                     }
                 }
             }
@@ -218,13 +199,11 @@ int main()
                 {
                     Piezo::getInstance()->beepOK();
                     scanner.setOn(false);
-                    displayChanged = true;
                 }
                 else // scanner is off and scan is allowed
                 {
                     scanner.setOn(true);
                     Piezo::getInstance()->beepOK();
-                    displayChanged = true;
                 }
             }
             else if (scanner.isOn())
@@ -233,7 +212,6 @@ int main()
                 {
                     scanner.setOn(false);
                     Piezo::getInstance()->beepOK();
-                    displayChanged = true;
                 }
                 else
                 {
@@ -242,7 +220,6 @@ int main()
                     if (updown != 0)
                     {
                         scanner.setUp(updown > 0);
-                        displayChanged = true;
                     }
 
                     scanner.update(currentState);
@@ -254,7 +231,6 @@ int main()
                 if (updown != 0)
                 {
                     currentState->up(updown);
-                    displayChanged = true;
                 }
                 
             }
@@ -266,11 +242,7 @@ int main()
         }
 
         // update peripherals
-        if (displayChanged)
-        {
-            Display::getInstance()->update(*currentState, scanner);
-            displayChanged = false;
-        }
+        Display::getInstance()->update(*currentState, scanner);
         
 
         if (currentState->getCurrentFrequency() != 0) // no unused memory channel
