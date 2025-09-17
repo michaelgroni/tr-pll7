@@ -32,7 +32,7 @@ int main()
     auto rotarySm = setupRotaryPio();
 
     auto i2cInput = I2Cinput::getInstance();
-    
+
     TrxStateVfo vfoA(VFO_A_INIT);
     TrxStateVfo vfoB(VFO_B_INIT);
 
@@ -67,28 +67,28 @@ int main()
         // select state instance
         switch (I2Cinput::getInstance()->getSpecialMemoryChannel())
         {
-            case 1: // special memory scan min
-                currentState = &trxStateScanMin;
-                break;
-            case 2: // special memory scan max
-                currentState = &trxStateScanMax;
-                break;
-            case 3: // special memory filter
-                if (currentState != &stateFir)
-                {
-                    stateFir.update(currentState);
-                    currentState = (TrxState*) &stateFir;
-                }
-                break;
-            default: // no special memory channel active
-                if (I2Cinput::getInstance()->isPressedMR())
-                {
-                    currentState = &memories;
-                }
-                else
-                {
-                    currentState = I2Cinput::getInstance()->isPressedAB() ? &vfoB : &vfoA;
-                }
+        case 1: // special memory scan min
+            currentState = &trxStateScanMin;
+            break;
+        case 2: // special memory scan max
+            currentState = &trxStateScanMax;
+            break;
+        case 3: // special memory filter
+            if (currentState != &stateFir)
+            {
+                stateFir.update(currentState);
+                currentState = (TrxState *)&stateFir;
+            }
+            break;
+        default: // no special memory channel active
+            if (I2Cinput::getInstance()->isPressedMR())
+            {
+                currentState = &memories;
+            }
+            else
+            {
+                currentState = I2Cinput::getInstance()->isPressedAB() ? &vfoB : &vfoA;
+            }
         }
 
         // read rotary encoder and up/down buttons
@@ -128,7 +128,7 @@ int main()
             {
                 currentState->up(updown);
             }
-            
+
             if (I2Cinput::getInstance()->wasPressedM())
             {
                 Piezo::getInstance()->beepOK();
@@ -148,9 +148,9 @@ int main()
                 // queue_add_blocking(&filterConfigQueue, &firConfig);
             }
             break;
-        default: // no special memory channel active
+        default:                                        // no special memory channel active
             if (I2Cinput::getInstance()->isPressedMR()) // memory read switch
-            {   
+            {
                 if (!memories.isWriteModeOn()) // write mode is off
                 {
                     if (I2Cinput::getInstance()->wasPressedM())
@@ -232,7 +232,6 @@ int main()
                 {
                     currentState->up(updown);
                 }
-                
             }
             else // PTT pressed
             // The VFO wheel and the UP/DOWN buttons should work always in SSB and CW.
@@ -243,27 +242,33 @@ int main()
 
         // update peripherals
         Display::getInstance()->update(*currentState, scanner);
-        
 
         if (currentState->getCurrentFrequency() != 0) // no unused memory channel
         {
             ADF4351::getInstance()->write(currentState->getCurrentFrequency()); // pll
         }
 
-        bool txAllowed = currentState->isTxAllowed() && !scanner.isOn();
-        setTxAllowed(true, pttSm);
-        // setTxAllowed(txAllowed, pttSm);
+        // bool txAllowed = currentState->isTxAllowed() && !scanner.isOn();
+        bool txAllowed = true; // TODO fix this
+        setTxAllowed(txAllowed, pttSm);
     }
 }
 
 void setTxAllowed(const bool allowed, const uint pttSm)
 {
-    if (allowed)
+    static bool state = false;
+
+    if (allowed != state)
     {
-        pio_sm_exec(PTT_PIO, pttSm, pio_encode_jmp(ptt_offset_enable));
-    }
-    else
-    {
-        pio_sm_exec(PTT_PIO, pttSm, pio_encode_jmp(ptt_offset_disable));
+        state = allowed;
+
+        if (allowed)
+        {
+            pio_sm_exec(PTT_PIO, pttSm, pio_encode_jmp(ptt_offset_enable));
+        }
+        else
+        {
+            pio_sm_exec(PTT_PIO, pttSm, pio_encode_jmp(ptt_offset_disable));
+        }
     }
 }
