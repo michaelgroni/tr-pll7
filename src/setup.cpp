@@ -32,6 +32,7 @@ uint setupPTTpio()
     uint pttSm = pio_claim_unused_sm(PTT_PIO, true);
     pio_sm_config pttConfig = ptt_program_get_default_config(pttOffset);
     pio_gpio_init(PTT_PIO, PTT_IN_PIN);
+    gpio_pull_up(PTT_IN_PIN);
     pio_gpio_init(PTT_PIO, PTT_OUT_PIN);
     sm_config_set_jmp_pin(&pttConfig, PTT_IN_PIN);
     sm_config_set_set_pins(&pttConfig, PTT_OUT_PIN, 1);
