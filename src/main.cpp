@@ -256,19 +256,12 @@ int main()
 
 void setTxAllowed(const bool allowed, const uint pttSm)
 {
-    static bool state = false;
-
-    if (allowed != state)
+    if (allowed)
     {
-        state = allowed;
-
-        if (allowed)
-        {
-            pio_sm_exec(PTT_PIO, pttSm, pio_encode_jmp(ptt_offset_enable));
-        }
-        else
-        {
-            pio_sm_exec(PTT_PIO, pttSm, pio_encode_jmp(ptt_offset_disable));
-        }
+        pio_sm_exec(PTT_PIO, pttSm, pio_encode_jmp(ptt_offset_enable));
+    }
+    else
+    {
+        pio_sm_exec(PTT_PIO, pttSm, pio_encode_jmp(ptt_offset_disable));
     }
 }

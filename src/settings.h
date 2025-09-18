@@ -43,9 +43,9 @@ inline const bool OLED_FLIPPED = true;
 inline const unsigned char OLED_CONTRAST = 255;
 
 // I2C input / output
-inline const uint8_t ENCODER_IC1_ADDR = 32;
-inline const uint8_t ENCODER_IC2_ADDR = 33;
-inline const uint8_t CONTROL_IC1_ADDR = 36;
+inline const uint8_t ENCODER_IC1_ADDR {0x20};
+inline const uint8_t ENCODER_IC2_ADDR {0x21};
+inline const uint8_t CONTROL_IC1_ADDR {0x3E}; // PCF8574 0x26; PCF8574A 0x3E
 
 // PIOs
 inline const auto ROTARY_PIO = pio0;
