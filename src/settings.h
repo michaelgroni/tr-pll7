@@ -33,10 +33,6 @@ inline const uint32_t SCANNER_WAIT_QSO_TIME = 4000;
 inline const uint32_t SCANNER_WAIT_PLL_TIME = 5; // wait for PLL and squelch before checking the scanner stop signal
 inline const uint32_t SCANNER_WAIT_SQUELCH_TIME = 70;
 
-// I2C bus
-inline const auto I2C_PORT_IO = i2c0;
-inline const auto I2C_PORT_SI5351A = i2c1;
-
 // I2C OLED display 128 x 32
 inline const int OLED_ADDRESS = 0x3C;
 inline const bool OLED_FLIPPED = true;
@@ -46,9 +42,6 @@ inline const unsigned char OLED_CONTRAST = 255;
 inline const uint8_t ENCODER_IC1_ADDR {0x20};
 inline const uint8_t ENCODER_IC2_ADDR {0x21};
 inline const uint8_t CONTROL_IC1_ADDR {0x3E}; // PCF8574 0x26; PCF8574A 0x3E
-
-// I2C Si5351A
-
 
 // PIOs
 inline const auto ROTARY_PIO = pio0;
@@ -65,8 +58,6 @@ inline const uint PTT_IN_PIN = 8;
 inline const std::unordered_map<std::string, uint> gpioInPins =
 {
     {"rotaryButton", 22},
-    {"micUp", 2},
-    {"micDown", 3},
     {"squelchOpen", 18}
 };
 

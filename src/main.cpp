@@ -97,7 +97,7 @@ int main()
 
         // read rotary encoder and up/down buttons
         int updown = readRotaryEncoder(rotarySm);
-        updown += readUpDownButtons();
+        // updown += readUpDownButtons(); // TODO implement up/down buttons on CONTROL IC1
 
         // read step buttons
         if (I2Cinput::getInstance()->wasPressedStepIncrease())

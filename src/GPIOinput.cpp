@@ -43,20 +43,3 @@ int readRotaryEncoder(uint rotarySm)
     return updown;
 }
 
-int_fast8_t readUpDownButtons()
-{
-    if (wasPressed("micUp") && isPressed("micUp")) // read event and state to avoid crosstalk effects
-    {
-        Piezo::getInstance()->beepOK();
-        return 1;
-    }
-    else if (wasPressed("micDown") && isPressed("micDown"))
-    {
-        Piezo::getInstance()->beepOK();
-        return -1;
-    } 
-    else
-    {
-        return 0;
-    }
-}
