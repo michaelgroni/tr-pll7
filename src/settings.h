@@ -34,7 +34,7 @@ inline const uint32_t SCANNER_WAIT_PLL_TIME = 5; // wait for PLL and squelch bef
 inline const uint32_t SCANNER_WAIT_SQUELCH_TIME = 70;
 
 // I2C bus
-inline const uint I2C_CLOCK = 400000;
+inline const uint I2C_CLOCK = 100000;
 inline const auto I2C_PORT = i2c0;
 
 // I2C OLED display 128 x 32
@@ -45,7 +45,7 @@ inline const unsigned char OLED_CONTRAST = 255;
 // I2C input / output
 inline const uint8_t ENCODER_IC1_ADDR {0x20};
 inline const uint8_t ENCODER_IC2_ADDR {0x21};
-inline const uint8_t CONTROL_IC1_ADDR {0x3E}; // PCF8574 0x26; PCF8574A 0x3E
+inline const uint8_t CONTROL_IC1_ADDR {0x24}; // PCF8574 0x26; PCF8574A 0x3E; PCB v6 0x24 only PCF8574 possible
 
 // PIOs
 inline const auto ROTARY_PIO = pio0;

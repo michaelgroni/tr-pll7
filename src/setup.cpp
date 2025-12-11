@@ -12,6 +12,8 @@ void setupI2C()
     i2c_init(I2C_PORT, I2C_CLOCK);
     gpio_set_function(I2C_SDA, GPIO_FUNC_I2C);
     gpio_set_function(I2C_SCL, GPIO_FUNC_I2C);
+    gpio_set_slew_rate(I2C_SDA, GPIO_SLEW_RATE_SLOW);
+    gpio_set_slew_rate(I2C_SCL, GPIO_SLEW_RATE_SLOW);
     gpio_pull_up(I2C_SDA);
     gpio_pull_up(I2C_SCL);
 }

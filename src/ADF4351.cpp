@@ -14,10 +14,11 @@ const uint8_t PLL_SPI_SCK = 6; // SCLK
 const uint8_t PLL_SPI_TX = 7;  // MOSI
 const uint8_t PLL_OUT_LE = 4;
 
-// SI5351 and ADF4351
-const uint_fast32_t F_XO_SI = 25000000;
-// const uint32_t F_VCO_SI = 32 * F_XO_SI; // Must bei a multiple of F_XO_SI.
-const uint_fast8_t M_MULTISYNTH {38};
+// SI5351
+const uint_fast32_t F_XO_SI = 25'000'000;
+const uint_fast8_t M_MULTISYNTH {90};
+
+// ADF4351
 const uint_fast32_t PFD_ADF = 100'000; // 100 kHz
 const uint_fast8_t R_ADF = 100;
 
@@ -43,14 +44,15 @@ void ADF4351::write(const uint32_t frequency)
         const double fRefADF = R_ADF * (PFD_ADF + (double) offsetADF/nADF);
 
         // Si5351 PLL_A      
-        const double nSi5351 = fRefADF / F_XO_SI;
-        ImproperFractionSi5351 nPLL(nSi5351 * M_MULTISYNTH);
-        const auto na = nPLL.getA();     
-        const auto nb = nPLL.getB();      // 20 bits
-        const auto nc = nPLL.getC();      // 20 bits
+        const double fPllSi = fRefADF * M_MULTISYNTH;
+        ImproperFractionSi5351 nPLLSi(fPllSi / F_XO_SI);
+        const auto na = nPLLSi.getA();     
+        const auto nb = nPLLSi.getB();      // 20 bits
+        const auto nc = nPLLSi.getC();      // 20 bits
         si5351.setPllParameters('a', na, nb, nc);
+        // si5351.resetPll('a');
 
-        sleep_ms(1); // wait for Si5351 to be ready
+        sleep_ms(2); // wait for the Si5351 to be ready
 
         // write R5
         uint8_t r5[] = {0x00, 0x58, 0x00, 0x05};
@@ -104,10 +106,16 @@ void ADF4351::setupSi5351(Si5351 &si5351)
 {
     si5351.setClkControl(0, false, true, 0, false, 3, 8);
     si5351.setPllInputSource(1);
-    si5351.setPllParameters('a', 20, 0, 15);
+    si5351.setPllParameters('a', 900'000'000/F_XO_SI, 0, 15);
     si5351.resetPll();
     si5351.setMultisynth0to5parameters(0, M_MULTISYNTH, 0, 15);
     si5351.setOutput(0, true);
+
+    // power down unused outputs (see AN619 chapter 4.2.5)
+    for (uint8_t i = 1; i <= 7; i++)
+    {
+        si5351.setClkControl(i, true, true, 0, false, 3, 2);
+    }
 }
 
 uint32_t ADF4351::pllFrequency(uint32_t frequency) const
