@@ -3,7 +3,8 @@
 #include "I2Cinput.h"
 #include "GPIOinput.h"
 
-TrxStateVfo::TrxStateVfo(uint32_t rxFrequency)
+TrxStateVfo::TrxStateVfo(I2Cinput& i2cInput, uint32_t rxFrequency)
+:TrxState(i2cInput)
 {
    setRxFrequency(rxFrequency);
 }
@@ -26,22 +27,22 @@ void TrxStateVfo::setRxFrequency(uint32_t rxFrequency)
 
 uint32_t TrxStateVfo::getRxFrequency() const
 {
-    if (!I2Cinput::getInstance()->isPressedReverse())
+    if (!(getI2Cinput().isPressedReverse()))
     {
         return rxFrequency;
     }
     else
     {
-        auto offset = I2Cinput::getInstance()->getDuplexOffset();
+        auto offset = getI2Cinput().getDuplexOffset();
         return rxFrequency + offset;
     }
 }
 
 uint32_t TrxStateVfo::getTxFrequency() const
 {
-    if (!I2Cinput::getInstance()->isPressedReverse())
+    if (!getI2Cinput().isPressedReverse())
     {
-        auto offset = I2Cinput::getInstance()->getDuplexOffset();
+        auto offset = getI2Cinput().getDuplexOffset();
         return getRxFrequency() + offset;
     }
     else
@@ -53,14 +54,14 @@ uint32_t TrxStateVfo::getTxFrequency() const
 
 bool TrxStateVfo::isCtcssOn() const
 {
-    return I2Cinput::getInstance()->getMode() == ctcss;
+    return getI2Cinput().getMode() == ctcss;
 }
 
 
 
 void TrxStateVfo::up(int n)
 {
-    auto mode = I2Cinput::getInstance()->getMode();
+    auto mode = getI2Cinput().getMode();
 
     if (mode != ctcss)
     {

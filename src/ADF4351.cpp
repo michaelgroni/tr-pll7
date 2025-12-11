@@ -23,12 +23,6 @@ const uint_fast8_t R_ADF = 100;
 
 using namespace std;
 
-ADF4351* ADF4351::getInstance()
-{
-    static ADF4351 instance;
-    return &instance;
-}
-
 void ADF4351::write(const uint32_t frequency)
 {
    auto fPll = pllFrequency(frequency);
@@ -48,7 +42,7 @@ void ADF4351::write(const uint32_t frequency)
         const auto na = nPLL.getA();     
         const auto nb = nPLL.getB();      // 20 bits
         const auto nc = nPLL.getC();      // 20 bits
-        si5351.setPllParameters('a', na, nb, nc);
+        si5351->setPllParameters('a', na, nb, nc);
 
         sleep_ms(1); // wait for Si5351 to be ready
 
@@ -85,7 +79,8 @@ void ADF4351::write(const uint32_t frequency)
    }
 }
 
-ADF4351::ADF4351()
+ADF4351::ADF4351(I2Cinput& i2cInput, i2c_inst_t* i2cSi5351)
+:i2cInput(i2cInput), i2cSi5351(i2cSi5351)
 {
     // SPI only TX
     gpio_set_function(PLL_SPI_SCK, GPIO_FUNC_SPI);
@@ -95,26 +90,27 @@ ADF4351::ADF4351()
     // chip select
     gpio_init(PLL_OUT_LE);
     gpio_set_dir(PLL_OUT_LE, true); 
-    gpio_put(PLL_OUT_LE, 1);
+    gpio_put(PLL_OUT_LE, 1);    
 
-    setupSi5351(si5351);
+    si5351 = std::make_unique<Si5351>(i2cSi5351);
+    setupSi5351();
 }
 
-void ADF4351::setupSi5351(Si5351 &si5351)
+void ADF4351::setupSi5351()
 {
-    si5351.setClkControl(0, false, true, 0, false, 3, 8);
-    si5351.setPllInputSource(1);
-    si5351.setPllParameters('a', 20, 0, 15);
-    si5351.resetPll();
-    si5351.setMultisynth0to5parameters(0, M_MULTISYNTH, 0, 15);
-    si5351.setOutput(0, true);
+    si5351->setClkControl(0, false, true, 0, false, 3, 8);
+    si5351->setPllInputSource(1);
+    si5351->setPllParameters('a', 20, 0, 15);
+    si5351->resetPll();
+    si5351->setMultisynth0to5parameters(0, M_MULTISYNTH, 0, 15);
+    si5351->setOutput(0, true);
 }
 
 uint32_t ADF4351::pllFrequency(uint32_t frequency) const
 {
     // PLL frequency = 21600000 + frequency +1500 (USB) or -1500 (LSB)
 
-    const auto mode = I2Cinput::getInstance()->getMode();
+    const auto mode = i2cInput.getMode();
 
     switch (mode)
     {

@@ -3,6 +3,10 @@
 #include "settings.h"
 #include "memory.h"
 
+TrxStateScanMax::TrxStateScanMax(I2Cinput& i2cInput)
+:TrxStateSpecialMemory(i2cInput)
+{}
+
 uint32_t TrxStateScanMax::getRxFrequency() const
 {
     return scanMax() + offset;

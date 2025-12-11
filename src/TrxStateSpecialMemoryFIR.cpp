@@ -5,8 +5,8 @@
 #include <sstream>
 #include <iomanip>
 
-TrxStateSpecialMemoryFIR::TrxStateSpecialMemoryFIR(const TrxState *oldState)
-    : oldState(oldState)
+TrxStateSpecialMemoryFIR::TrxStateSpecialMemoryFIR(I2Cinput& i2cInput, const TrxState *oldState)
+    :TrxStateSpecialMemory(i2cInput), oldState(oldState)
 {
     config.fHigh = Fir::getFMax();
     config.fNotch = 1000;     // 0 means off

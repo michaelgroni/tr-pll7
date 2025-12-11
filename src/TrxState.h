@@ -5,9 +5,12 @@
 #include <array>
 #include <string>
 
+#include "I2Cinput.h"
+
 class TrxState
 {
 public:
+    TrxState(I2Cinput& i2cInput);
     virtual uint32_t getRxFrequency() const = 0;
     virtual uint32_t getTxFrequency() const = 0;
     virtual void up(int n) = 0;
@@ -16,11 +19,13 @@ public:
     unsigned int getStep() const;
     std::string getStepToString() const;
 
-    virtual uint32_t getCurrentFrequency() const;
+    virtual uint32_t getCurrentFrequency();
     virtual bool isTxAllowed() const;
 
     virtual bool isCtcssOn() const = 0;
     virtual double getCtcssFrequency() const;
+
+    I2Cinput& getI2Cinput() const { return i2cInput; }
 
 protected:
     // ctcss frequencies
@@ -29,7 +34,9 @@ protected:
         186.2, 192.8, 203.5, 210.7, 218.1, 225.7, 233.6, 241.8, 250.3};
     size_t ctcssIndex = 20;
 
-private:    
+private:
+    I2Cinput& i2cInput;
+
     // available steps
     const std::array<unsigned int, 7> steps = {0, 10, 100, 1000, 10000, 12500, 1000000}; // 0 means auto
     size_t stepIndex = 0; // 0 means auto

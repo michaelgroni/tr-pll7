@@ -4,23 +4,24 @@
 
 #include "rp2040-Si5351/Si5351.hpp"
 
-#include <array>
+#include "I2Cinput.h"
+
+#include <memory>
 
 class ADF4351
 {
 public:
-    static ADF4351* getInstance();
+    ADF4351(I2Cinput& i2cInput, i2c_inst_t* i2cSi5351);
     void write(const uint32_t frequency);
 
 private:
     uint32_t oldPllFrequency {0};
 
-    ADF4351();                              
-    ADF4351(const ADF4351&);                   // disable copy constructor              
-    ADF4351 & operator = (const ADF4351 &);    // disable operator =
+    I2Cinput& i2cInput;
 
-    Si5351 si5351;
-    void setupSi5351(Si5351 &si5351);
+    i2c_inst_t* i2cSi5351;
+    std::unique_ptr<Si5351> si5351;
+    void setupSi5351();
 
     uint32_t pllFrequency(uint32_t frequency) const;
     void writePLL(const uint8_t* values);

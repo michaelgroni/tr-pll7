@@ -62,7 +62,7 @@ add_library(settings settings.cpp)
 target_link_libraries(settings pico_stdlib hardware_i2c hardware_spi hardware_pio hardware_flash)
 
 add_library(I2Cinput I2Cinput.cpp)
-target_link_libraries(I2Cinput settings pico_stdlib hardware_i2c hardware_spi hardware_pio hardware_timer)
+target_link_libraries(I2Cinput settings pico_stdlib hardware_i2c hardware_spi hardware_pio hardware_i2c hardware_timer)
 
 add_library(TrxState TrxState.cpp)
 target_link_libraries(TrxState pico_stdlib hardware_i2c settings hardware_spi hardware_pio I2Cinput)

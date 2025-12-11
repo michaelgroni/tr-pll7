@@ -7,7 +7,7 @@
 class TrxStateMemories : public TrxState
 {
 public:
-    TrxStateMemories();
+    TrxStateMemories(I2Cinput& i2cInput);
     uint32_t getRxFrequency() const;
     uint32_t getTxFrequency() const;
     void up(int n);

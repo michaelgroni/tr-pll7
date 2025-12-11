@@ -5,7 +5,8 @@
 #include "GPIOinput.h"
 #include "GPIOoutput.h"
 
-TrxStateMemories::TrxStateMemories()
+TrxStateMemories::TrxStateMemories(I2Cinput& i2cInput)
+:TrxState(i2cInput)
 {
     // find a used memory channel
     memoryIndex = MEMORIES;

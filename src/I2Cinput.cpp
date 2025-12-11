@@ -2,20 +2,15 @@
 
 #include "hardware/timer.h"
 
-I2Cinput::I2Cinput()
+I2Cinput::I2Cinput(i2c_inst* i2Port)
+:i2cPort(i2cPort)
 {}
-
-I2Cinput* I2Cinput::getInstance()
-{
-    static I2Cinput instance;
-    return &instance;
-}
 
 void I2Cinput::update() // must be called in the main loop
 {
-    i2c_read_blocking(I2C_PORT_IO, ENCODER_IC1_ADDR, &byte1, 1, false);
-    i2c_read_blocking(I2C_PORT_IO, ENCODER_IC2_ADDR, &byte2, 1, false);
-    i2c_read_blocking(I2C_PORT_IO, CONTROL_IC1_ADDR, &byte3, 1, false);
+    i2c_read_blocking(i2cPort, ENCODER_IC1_ADDR, &byte1, 1, false);
+    i2c_read_blocking(i2cPort, ENCODER_IC2_ADDR, &byte2, 1, false);
+    i2c_read_blocking(i2cPort, CONTROL_IC1_ADDR, &byte3, 1, false);
 }
 
 uint8_t I2Cinput::getSpecialMemoryChannel() // memory switch
@@ -40,7 +35,7 @@ mode I2Cinput::getMode()
     if (m == lsb) // mode is LSB or the switch is being moved at the moment
     {
         sleep_ms(6);
-        i2c_read_blocking(I2C_PORT_IO, ENCODER_IC1_ADDR, &byte1, 1, false);
+        i2c_read_blocking(i2cPort, ENCODER_IC1_ADDR, &byte1, 1, false);
         return getModePrivate();
     }
     else
