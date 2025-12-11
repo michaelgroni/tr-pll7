@@ -22,11 +22,15 @@
 #include "setup.h"
 #include "ptt.pio.h"
 
+// I2C bus
+inline const auto I2C_PORT_IO = i2c0;
+inline const auto I2C_PORT_SI5351A = i2c1;
+
 void setTxAllowed(const bool allowed, const uint pttSm);
 
 int main()
 {
-    setupI2C();
+    setupI2C(I2C_PORT_IO, I2C_PORT_SI5351A);
     setupGPIOinput();
     auto pttSm = setupPTTpio();
     auto rotarySm = setupRotaryPio();

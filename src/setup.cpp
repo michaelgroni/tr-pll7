@@ -14,18 +14,19 @@ const uint I2C_IO_CLOCK = 100000;
 const uint I2C_SI5351A_CLOCK = 400000;
 
 
-void setupI2C()
+void setupI2C(i2c_inst_t* i2cIO, i2c_inst_t* i2cSi5351A)
 {
-    i2c_init(I2C_PORT_IO, I2C_IO_CLOCK);
-    gpio_set_function(I2C_IO_SDA, GPIO_FUNC_I2C);
-    gpio_set_function(I2C_IO_SCL, GPIO_FUNC_I2C);
     gpio_pull_up(I2C_IO_SDA);
     gpio_pull_up(I2C_IO_SCL);
+    i2c_init(i2cIO, I2C_IO_CLOCK);
+    gpio_set_function(I2C_IO_SDA, GPIO_FUNC_I2C);
+    gpio_set_function(I2C_IO_SCL, GPIO_FUNC_I2C);
 
-    i2c_init(I2C_PORT_SI5351A, I2C_SI5351A_CLOCK);
-    gpio_set_function(I2C_SI5351A_SCL, GPIO_FUNC_I2C);
     gpio_pull_up(I2C_SI5351A_SDA);
-    gpio_pull_up(I2C_SI5351A_SCL);
+    gpio_pull_up(I2C_SI5351A_SCL);    
+    i2c_init(i2cSi5351A, I2C_SI5351A_CLOCK);
+    gpio_set_function(I2C_SI5351A_SDA, GPIO_FUNC_I2C);
+    gpio_set_function(I2C_SI5351A_SCL, GPIO_FUNC_I2C);
 }
 
 void setupGPIOinput()
