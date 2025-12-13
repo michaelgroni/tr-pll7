@@ -22,8 +22,8 @@
 #include "setup.h"
 #include "ptt.pio.h"
 
-inline const auto I2C_PORT_IO = i2c0;
-inline const auto I2C_PORT_SI5351A = i2c1;
+const auto I2C_PORT_IO = i2c0;
+const auto I2C_PORT_SI5351A = i2c1;
 
 void setTxAllowed(const bool allowed, const uint pttSm);
 

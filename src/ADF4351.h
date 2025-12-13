@@ -20,7 +20,7 @@ private:
     I2Cinput& i2cInput;
 
     i2c_inst_t* i2cSi5351;
-    std::unique_ptr<Si5351> si5351;
+    Si5351 si5351;
     void setupSi5351();
 
     uint32_t pllFrequency(uint32_t frequency) const;
