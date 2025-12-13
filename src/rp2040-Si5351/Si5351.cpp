@@ -222,7 +222,7 @@ void Si5351::setOutput(const uint8_t clkIndex, const bool enabled)
 
     if (enabled) // enable
     {
-        data.at(1) &= !mask;
+        data.at(1) &= ~mask;
     }
     else //disable
     {
