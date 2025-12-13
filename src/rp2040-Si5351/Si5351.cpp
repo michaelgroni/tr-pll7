@@ -190,11 +190,11 @@ void Si5351::setOutputDisableState(uint8_t clkIndex, const uint8_t disState)
 
     if (clkIndex > 7) clkIndex = 0;
 
-    uint16_t deleteMask = ~(0x03 << clkIndex); // for example 0xF3 to clear the state of CLK1
+    uint16_t deleteMask = ~(0x03 << (2*clkIndex)); // for example 0xF3 to clear the state of CLK1
     uint8_t deleteLow = (uint8_t) deleteMask;
     uint8_t deleteHigh = (uint8_t) (deleteMask >> 8);
 
-    uint16_t dataMask = (disState && 0x03) << clkIndex;
+    uint16_t dataMask = (disState & 0x03) << (2*clkIndex);
     uint8_t dataLow = (uint8_t) dataMask;
     uint8_t dataHigh = (uint8_t) (dataMask >> 8);
 
