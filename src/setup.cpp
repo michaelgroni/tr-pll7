@@ -4,14 +4,14 @@
 #include "ptt.pio.h"
 #include "rotaryEncoder.pio.h"
 
-const uint8_t I2C_IO_SDA = 0;
-const uint8_t I2C_IO_SCL = 1;
+constexpr uint8_t I2C_IO_SDA = 0;
+constexpr uint8_t I2C_IO_SCL = 1;
 
-const uint8_t I2C_SI5351A_SDA = 2;
-const uint8_t I2C_SI5351A_SCL = 3;
+constexpr uint8_t I2C_SI5351A_SDA = 2;
+constexpr uint8_t I2C_SI5351A_SCL = 3;
 
-const uint I2C_IO_CLOCK = 100000;
-const uint I2C_SI5351A_CLOCK = 400000;
+constexpr uint I2C_IO_CLOCK = 100000;
+constexpr uint I2C_SI5351A_CLOCK = 400000;
 
 
 void setupI2C(i2c_inst_t* i2cIO, i2c_inst_t* i2cSi5351A)

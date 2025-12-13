@@ -178,7 +178,7 @@ void Si5351::setMultisynth0to5parameters(const uint8_t multisynth, const uint32_
     auto data = registerContent(address, integer, num, denom);
 
     outDiv &= 0x07; // ignore bits left of 2^2
-    outDiv << 4;    // shift to the correct position
+    outDiv <<= 4;    // shift to the correct position
     data.at(2) |= outDiv;
 
     i2c_write_blocking(I2C_PORT, I2C_ADDR, data.data(), sizeof(data), false);
