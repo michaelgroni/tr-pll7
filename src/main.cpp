@@ -257,6 +257,7 @@ int main()
         }
 
         // update peripherals
+         __asm volatile("bkpt 0");
         display.update(*currentState, scanner);
 
         if (currentState->getCurrentFrequency() != 0) // no unused memory channel

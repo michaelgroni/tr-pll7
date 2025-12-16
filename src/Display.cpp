@@ -14,10 +14,10 @@
 #include <sstream>
 
 Display::Display(i2c_inst* i2cPort)
+:oled(i2cPort, OLED_ADDRESS, pico_ssd1306::Size::W128xH32)
 {
-    oled = std::make_unique<pico_ssd1306::SSD1306>(i2cPort, OLED_ADDRESS, pico_ssd1306::Size::W128xH32);
-    oled->setOrientation(OLED_FLIPPED);
-    oled->setContrast(OLED_CONTRAST);
+    oled.setOrientation(OLED_FLIPPED);
+    oled.setContrast(OLED_CONTRAST);
 }
 
 void Display::update(TrxState &trxState, const Scanner &scanner)
@@ -127,7 +127,7 @@ void Display::update(TrxState &trxState, const Scanner &scanner)
 
     setLine3(newLine3);
 
-    oled->sendBuffer();
+    oled.sendBuffer();
 }
 
 /*
@@ -139,55 +139,55 @@ void Display::drawDigit(uint8_t x, uint8_t y, uint digit)
     switch (digit)
     {
     case 1:
-        drawLine(oled.get(), x + 5, y, x + 5, y + 14);
+        drawLine(&oled, x + 5, y, x + 5, y + 14);
         break;
     case 2:
-        drawLine(oled.get(), x + 1, y, x + 7, y);
-        drawLine(oled.get(), x + 8, y, x + 8, y + 6);
-        drawLine(oled.get(), x + 1, y + 7, x + 7, y + 7);
-        drawLine(oled.get(), x, y + 8, x, y + 13);
-        drawLine(oled.get(), x + 1, y + 14, x + 7, y + 14);
+        drawLine(&oled, x + 1, y, x + 7, y);
+        drawLine(&oled, x + 8, y, x + 8, y + 6);
+        drawLine(&oled, x + 1, y + 7, x + 7, y + 7);
+        drawLine(&oled, x, y + 8, x, y + 13);
+        drawLine(&oled, x + 1, y + 14, x + 7, y + 14);
         break;
     case 3:
-        drawLine(oled.get(), x + 1, y, x + 7, y);
-        drawLine(oled.get(), x + 8, y, x + 8, y + 14);
-        drawLine(oled.get(), x + 1, y + 7, x + 7, y + 7);
-        drawLine(oled.get(), x + 1, y + 14, x + 7, y + 14);
+        drawLine(&oled, x + 1, y, x + 7, y);
+        drawLine(&oled, x + 8, y, x + 8, y + 14);
+        drawLine(&oled, x + 1, y + 7, x + 7, y + 7);
+        drawLine(&oled, x + 1, y + 14, x + 7, y + 14);
         break;
     case 4:
-        drawLine(oled.get(), x, y, x, y + 6);
-        drawLine(oled.get(), x + 8, y, x + 8, y + 14);
-        drawLine(oled.get(), x + 1, y + 7, x + 7, y + 7);
+        drawLine(&oled, x, y, x, y + 6);
+        drawLine(&oled, x + 8, y, x + 8, y + 14);
+        drawLine(&oled, x + 1, y + 7, x + 7, y + 7);
         break;
     case 6:
-        drawLine(oled.get(), x, y + 7, x, y + 14);
+        drawLine(&oled, x, y + 7, x, y + 14);
     case 5:
-        drawLine(oled.get(), x, y, x, y + 6);
-        drawLine(oled.get(), x + 1, y, x + 7, y);
-        drawLine(oled.get(), x + 8, y + 7, x + 8, y + 14);
-        drawLine(oled.get(), x + 1, y + 7, x + 7, y + 7);
-        drawLine(oled.get(), x + 1, y + 14, x + 7, y + 14);
+        drawLine(&oled, x, y, x, y + 6);
+        drawLine(&oled, x + 1, y, x + 7, y);
+        drawLine(&oled, x + 8, y + 7, x + 8, y + 14);
+        drawLine(&oled, x + 1, y + 7, x + 7, y + 7);
+        drawLine(&oled, x + 1, y + 14, x + 7, y + 14);
         break;
     case 0:
-        drawLine(oled.get(), x, y, x, y + 14);
-        drawLine(oled.get(), x + 1, y + 14, x + 7, y + 14);
+        drawLine(&oled, x, y, x, y + 14);
+        drawLine(&oled, x + 1, y + 14, x + 7, y + 14);
     case 7:
-        drawLine(oled.get(), x + 1, y, x + 7, y);
-        drawLine(oled.get(), x + 8, y, x + 8, y + 14);
+        drawLine(&oled, x + 1, y, x + 7, y);
+        drawLine(&oled, x + 8, y, x + 8, y + 14);
         break;
     case 8:
-        drawLine(oled.get(), x, y + 7, x, y + 14);
+        drawLine(&oled, x, y + 7, x, y + 14);
     case 9:
-        drawLine(oled.get(), x, y, x, y + 6);
-        drawLine(oled.get(), x + 1, y, x + 7, y);
-        drawLine(oled.get(), x + 8, y, x + 8, y + 14);
-        drawLine(oled.get(), x + 1, y + 7, x + 7, y + 7);
-        drawLine(oled.get(), x + 1, y + 14, x + 7, y + 14);
+        drawLine(&oled, x, y, x, y + 6);
+        drawLine(&oled, x + 1, y, x + 7, y);
+        drawLine(&oled, x + 8, y, x + 8, y + 14);
+        drawLine(&oled, x + 1, y + 7, x + 7, y + 7);
+        drawLine(&oled, x + 1, y + 14, x + 7, y + 14);
         break;
     default: // unknown character
-        drawLine(oled.get(), x + 1, y, x + 6, y);
-        drawLine(oled.get(), x + 1, y + 7, x + 6, y + 14);
-        drawLine(oled.get(), x + 1, y + 14, x + 6, y + 14);
+        drawLine(&oled, x + 1, y, x + 6, y);
+        drawLine(&oled, x + 1, y + 7, x + 6, y + 14);
+        drawLine(&oled, x + 1, y + 14, x + 6, y + 14);
     }
 }
 
@@ -195,7 +195,7 @@ void Display::setFrequency(const uint32_t frequency)
 {
     this->frequency = frequency;
 
-    fillRect(oled.get(), 0, 0, 110, 15, pico_ssd1306::WriteMode::SUBTRACT); // overwrite old content
+    fillRect(&oled, 0, 0, 110, 15, pico_ssd1306::WriteMode::SUBTRACT); // overwrite old content
 
     uint8_t x = 0;
     uint column = 0;
@@ -206,7 +206,7 @@ void Display::setFrequency(const uint32_t frequency)
 
         if (column == 2 || column == 5) // thousands point
         {
-            oled->setPixel(x + 11, 14);
+            oled.setPixel(x + 11, 14);
             x += 14;
         }
         else // no thousands point
@@ -222,16 +222,16 @@ void Display::setLine2(const std::string line2)
 {
     this->line2 = line2;
 
-    fillRect(oled.get(), 0, 17, 128, 24, pico_ssd1306::WriteMode::SUBTRACT); // overwrite old content
-    drawText(oled.get(), font_8x8, line2.c_str(), 0, 17);
+    fillRect(&oled, 0, 17, 128, 24, pico_ssd1306::WriteMode::SUBTRACT); // overwrite old content
+    drawText(&oled, font_8x8, line2.c_str(), 0, 17);
 }
 
 void Display::setLine3(const std::string line3)
 {
     this->line3 = line3;
 
-    fillRect(oled.get(), 0, 25, 128, 32, pico_ssd1306::WriteMode::SUBTRACT); // overwrite old content
-    drawText(oled.get(), font_8x8, line3.c_str(), 0, 25);
+    fillRect(&oled, 0, 25, 128, 32, pico_ssd1306::WriteMode::SUBTRACT); // overwrite old content
+    drawText(&oled, font_8x8, line3.c_str(), 0, 25);
 }
 
 void Display::setInfoNortheast(const char c)
@@ -242,6 +242,6 @@ void Display::setInfoNortheast(const char c)
     cString[0] = c;
     cString[1] = '\0';
 
-    fillRect(oled.get(), 117, 0, 127, 15, pico_ssd1306::WriteMode::SUBTRACT); // overwrite old content
-    drawText(oled.get(), font_12x16, cString, 117, 0);
+    fillRect(&oled, 117, 0, 127, 15, pico_ssd1306::WriteMode::SUBTRACT); // overwrite old content
+    drawText(&oled, font_12x16, cString, 117, 0);
 }

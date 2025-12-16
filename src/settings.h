@@ -11,27 +11,27 @@
 
 
 // memory
-inline const uint32_t MY_FLASH_OFFSET = 510 * FLASH_SECTOR_SIZE;
-inline const uint32_t MY_FLASH_DATA = MY_FLASH_OFFSET + FLASH_SECTOR_SIZE;
-inline const size_t MEMORIES = 100;
+inline constexpr uint32_t MY_FLASH_OFFSET = 510 * FLASH_SECTOR_SIZE;
+inline constexpr uint32_t MY_FLASH_DATA = MY_FLASH_OFFSET + FLASH_SECTOR_SIZE;
+inline constexpr size_t MEMORIES = 100;
 
 
 // frequencies
-inline const uint32_t F_MIN = 400000000;
-inline const uint32_t F_MAX = 450000000;
-inline const uint32_t F_MIN_TX = 430000000;
-inline const uint32_t F_MAX_TX = 440000000;
-inline const uint32_t VFO_A_INIT = 435000000;
-inline const uint32_t VFO_B_INIT = 438775000;
+inline constexpr uint32_t F_MIN = 400000000;
+inline constexpr uint32_t F_MAX = 450000000;
+inline constexpr uint32_t F_MIN_TX = 430000000;
+inline constexpr uint32_t F_MAX_TX = 440000000;
+inline constexpr uint32_t VFO_A_INIT = 435000000;
+inline constexpr uint32_t VFO_B_INIT = 438775000;
 
 // ADC
 inline const unsigned int F_SAMPLE = 20000;
 
 // waiting times in milliseconds
-inline const uint32_t MAIN_LOOP_PAUSE_TIME = 100;
-inline const uint32_t SCANNER_WAIT_QSO_TIME = 4000;
-inline const uint32_t SCANNER_WAIT_PLL_TIME = 5; // wait for PLL and squelch before checking the scanner stop signal
-inline const uint32_t SCANNER_WAIT_SQUELCH_TIME = 70;
+inline constexpr uint32_t MAIN_LOOP_PAUSE_TIME = 100;
+inline constexpr uint32_t SCANNER_WAIT_QSO_TIME = 4000;
+inline constexpr uint32_t SCANNER_WAIT_PLL_TIME = 5; // wait for PLL and squelch before checking the scanner stop signal
+inline constexpr uint32_t SCANNER_WAIT_SQUELCH_TIME = 70;
 
 // I2C OLED display 128 x 32
 inline constexpr int OLED_ADDRESS = 0x3C;

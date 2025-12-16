@@ -8,7 +8,6 @@ I2Cinput::I2Cinput(i2c_inst* i2Port)
 
 void I2Cinput::update() // must be called in the main loop
 {
-     __asm volatile("bkpt 0");
     i2c_read_blocking(i2cPort, ENCODER_IC1_ADDR, &byte1, 1, false);
     i2c_read_blocking(i2cPort, ENCODER_IC2_ADDR, &byte2, 1, false);
     i2c_read_blocking(i2cPort, CONTROL_IC1_ADDR, &byte3, 1, false);

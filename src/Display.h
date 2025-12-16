@@ -19,7 +19,7 @@ private:
     std::string line3 = "";
     char infoNortheast = ' ';                        
 
-    std::unique_ptr<pico_ssd1306::SSD1306> oled;
+    pico_ssd1306::SSD1306 oled;
 
     void drawDigit(uint8_t x, uint8_t y, uint digit);
     void setFrequency(const uint32_t frequency);
