@@ -1,9 +1,9 @@
 # Generated Cmake Pico project file
 
-cmake_minimum_required(VERSION 3.13)
+cmake_minimum_required(VERSION 3.31)
 
 set(CMAKE_C_STANDARD 11)
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(PICO_CXX_ENABLE_RTTI 1)
 
@@ -16,9 +16,9 @@ if(WIN32)
 else()
     set(USERHOME $ENV{HOME})
 endif()
-set(sdkVersion 2.1.1)
+set(sdkVersion 2.2.0)
 set(toolchainVersion 14_2_Rel1)
-set(picotoolVersion 2.1.1)
+set(picotoolVersion 2.2.0-a4)
 set(picoVscode ${USERHOME}/.pico-sdk/cmake/pico-vscode.cmake)
 if (EXISTS ${picoVscode})
     include(${picoVscode})
@@ -29,7 +29,18 @@ set(PICO_BOARD pico CACHE STRING "Board type")
 # Pull in Raspberry Pi Pico SDK (must be before project)
 include(pico_sdk_import.cmake)
 
+
 project(tr-pll70 C CXX ASM)
+
+# ChatGPT
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE Debug CACHE STRING "Build type" FORCE)
+endif()
+
+add_compile_options(-Og -g3)
+add_link_options(-g)
+set(PICO_DEOPTIMIZED_DEBUG 1)
+# /ChatGPT
 
 # Initialise the Raspberry Pi Pico SDK
 pico_sdk_init()
@@ -37,13 +48,14 @@ pico_sdk_init()
 # Add executable. Default name is the project name, version 0.1
 
 add_executable(tr-pll70 main.cpp )
+target_link_options(tr-pll70 PRIVATE "LINKER:--defsym=__StackSize=0x8000")   # 32 KiB
 
 pico_set_program_name(tr-pll70 "tr-pll70")
 pico_set_program_version(tr-pll70 "0.3")
 
 # Modify the below lines to enable/disable output over UART/USB
-# pico_enable_stdio_uart(tr-pll70 0)
-# pico_enable_stdio_usb(tr-pll70 0)
+pico_enable_stdio_uart(tr-pll70 0)
+pico_enable_stdio_usb(tr-pll70 1)
 
 # Add the standard library to the build
 target_link_libraries(tr-pll70
@@ -72,6 +84,7 @@ target_link_libraries(TrxStateVfo TrxState memory pico_stdlib hardware_i2c hardw
 
 add_library(GPIOoutput GPIOoutput.cpp)
 pico_generate_pio_header(GPIOoutput ${CMAKE_CURRENT_LIST_DIR}/ctcss.pio) 
+pico_generate_pio_header(GPIOoutput ${CMAKE_CURRENT_LIST_DIR}/beep.pio)
 target_link_libraries(GPIOoutput settings TrxState pico_stdlib hardware_timer hardware_pio hardware_clocks)
 
 add_library(memory memory.cpp)
@@ -101,6 +114,8 @@ add_library(TrxStateMemories TrxStateMemories.cpp)
 target_link_libraries(TrxStateMemories pico_stdlib TrxState memory settings GPIOoutput GPIOinput)
 
 add_library(setup setup.cpp)
+pico_generate_pio_header(setup ${CMAKE_CURRENT_LIST_DIR}/rotaryEncoder.pio)
+pico_generate_pio_header(setup ${CMAKE_CURRENT_LIST_DIR}/ptt.pio)
 target_link_libraries(setup pico_stdlib hardware_pio settings)
 
 add_library(Display Display.cpp)
@@ -145,9 +160,7 @@ add_library(core1 core1.cpp)
 pico_generate_pio_header(core1 ${CMAKE_CURRENT_LIST_DIR}/r2r.pio)
 target_link_libraries(core1 pico_stdlib hardware_adc settings Fir Median)
  
-pico_generate_pio_header(setup ${CMAKE_CURRENT_LIST_DIR}/rotaryEncoder.pio)
-pico_generate_pio_header(GPIOoutput ${CMAKE_CURRENT_LIST_DIR}/beep.pio)
-pico_generate_pio_header(setup ${CMAKE_CURRENT_LIST_DIR}/ptt.pio)
+
 
 
 # Add any user requested libraries

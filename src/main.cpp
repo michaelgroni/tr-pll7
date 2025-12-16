@@ -1,4 +1,4 @@
-#include "pico/stdlib.h"
+﻿#include "pico/stdlib.h"
 #include "pico/multicore.h"
 #include "hardware/i2c.h"
 #include "hardware/pio.h"
@@ -22,53 +22,59 @@
 #include "setup.h"
 #include "ptt.pio.h"
 
-const auto I2C_PORT_IO = i2c0;
-const auto I2C_PORT_SI5351A = i2c1;
+
+constexpr auto I2C_PORT_IO = i2c0;
+constexpr auto I2C_PORT_SI5351A = i2c1;
 
 void setTxAllowed(const bool allowed, const uint pttSm);
+
 
 int main()
 {
     setupI2C(I2C_PORT_IO, I2C_PORT_SI5351A);
+    
     setupGPIOinput();
-    auto pttSm = setupPTTpio();
-    auto rotarySm = setupRotaryPio();
+    const auto pttSm = setupPTTpio();
+    const auto rotarySm = setupRotaryPio();
 
-    I2Cinput i2cInput(I2C_PORT_IO);
+    static I2Cinput i2cInput(I2C_PORT_IO);
 
-    TrxStateVfo vfoA(i2cInput, VFO_A_INIT);
-    TrxStateVfo vfoB(i2cInput, VFO_B_INIT);
+    static TrxStateVfo vfoA(i2cInput, VFO_A_INIT);
+    static TrxStateVfo vfoB(i2cInput, VFO_B_INIT);
 
-    TrxStateMemories memories(i2cInput);
+    static TrxStateMemories memories(i2cInput);
 
     TrxStateScanMax trxStateScanMax(i2cInput);
 
-    Scanner scanner;
+    static Scanner scanner;
 
     setTxAllowed(false, pttSm);
 
     TrxState *currentState = i2cInput.isPressedAB() ? &vfoB : &vfoA;
 
-    TrxStateSpecialMemoryFIR stateFir(i2cInput, currentState);
+    static TrxStateSpecialMemoryFIR stateFir(i2cInput, currentState);
     TrxStateScanMin trxStateScanMin(i2cInput);
-
-    Piezo::getInstance()->beepOK();
 
     flashInit();
 
-    auto firConfig = stateFir.getConfig();
-    queue_init(&filterConfigQueue, sizeof(filterConfig), 2);
-    queue_add_blocking(&filterConfigQueue, &firConfig);
+    // static auto firConfig = stateFir.getConfig();
+    // queue_init(&filterConfigQueue, sizeof(filterConfig), 2);
+    // queue_add_blocking(&filterConfigQueue, &firConfig);
 
-    ADF4351 adf4351(i2cInput, I2C_PORT_SI5351A);
+    Piezo::getInstance()->beepOK();
 
-    Display display(I2C_PORT_IO);
-
-    multicore_launch_core1(core1_entry);
+    sleep_ms(100);
+    static ADF4351 adf4351(i2cInput, I2C_PORT_SI5351A);  
+    static Display display(I2C_PORT_IO);
+    
+    // multicore_launch_core1(core1_entry);
 
     // main loop
+    
     while (true)
     {
+
+        Piezo::getInstance()->beepOK();
         sleep_ms(MAIN_LOOP_PAUSE_TIME);
 
         // read I²C input
@@ -154,7 +160,7 @@ int main()
             stateFir.up(updown);
             if (stateFir.wasChanged())
             {
-                firConfig = stateFir.getConfig();
+                // firConfig = stateFir.getConfig();
                 // queue_add_blocking(&filterConfigQueue, &firConfig);
             }
             break;

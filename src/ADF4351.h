@@ -26,4 +26,3 @@ private:
     uint32_t pllFrequency(uint32_t frequency) const;
     void writePLL(const uint8_t* values);
 };
-
