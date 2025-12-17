@@ -31,7 +31,7 @@ void setTxAllowed(const bool allowed, const uint pttSm);
 
 int main()
 {
-    __asm volatile("bkpt 0");
+    // __asm volatile("bkpt 0");
     setupI2C(I2C_PORT_IO, I2C_PORT_SI5351A);
     
     setupGPIOinput();
@@ -74,8 +74,6 @@ int main()
     
     while (true)
     {
-
-        Piezo::getInstance()->beepOK();
         sleep_ms(MAIN_LOOP_PAUSE_TIME);
 
         // read I²C input
