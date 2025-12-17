@@ -31,11 +31,11 @@ void setupI2C(i2c_inst_t* i2cIO, i2c_inst_t* i2cSi5351A)
 
 void setupGPIOinput()
 {
-    for (auto [name, pin] : gpioInPins())
-    {
-        gpio_init(pin);
-        gpio_pull_up(pin);
-    }
+        gpio_init(GPIO_ROTARY_BUTTON);
+        gpio_pull_up(GPIO_ROTARY_BUTTON);
+
+        gpio_init(GPIO_SQUELCH_OPEN);
+        gpio_pull_up(GPIO_SQUELCH_OPEN);        
 }
 
 uint setupPTTpio()

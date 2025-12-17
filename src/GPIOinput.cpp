@@ -2,21 +2,19 @@
 
 #include "GPIOoutput.h"
 
-bool isPressed(std::string pinName)
+bool isPressed(const uint8_t gpio)
 {
-    const auto pin = gpioInPins().at(pinName);
-    return !gpio_get(pin);
+    return !gpio_get(gpio);
 }
 
 
-bool wasPressed(std::string pinName)
+bool wasPressed(const uint8_t gpio)
 {
-    const auto pin = gpioInPins().at(pinName);
-    const int32_t mask = 0xF << 4 * (pin % 8);
-    const uint32_t events = (io_bank0_hw->intr[pin / 8] & mask) >> 4 * ( pin % 8);
+    const int32_t mask = 0xF << 4 * (gpio % 8);
+    const uint32_t events = (io_bank0_hw->intr[gpio / 8] & mask) >> 4 * ( gpio % 8);
     if (events & GPIO_IRQ_EDGE_FALL)
     {
-        gpio_acknowledge_irq(pin, GPIO_IRQ_EDGE_FALL); // clear fall event
+        gpio_acknowledge_irq(gpio, GPIO_IRQ_EDGE_FALL); // clear fall event
         return true;
     }
     else
@@ -28,8 +26,7 @@ bool wasPressed(std::string pinName)
 
 bool isSquelchOpen()
 {
-    const auto pin = gpioInPins().at("squelchOpen");
-    return gpio_get(pin);
+    return gpio_get(GPIO_SQUELCH_OPEN);
 }
 
 

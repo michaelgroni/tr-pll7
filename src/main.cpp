@@ -153,7 +153,7 @@ int main()
             }
             break;
         case 3: // special memory filter
-            if (wasPressed("rotaryButton") && isPressed("rotaryButton"))
+            if (wasPressed(GPIO_ROTARY_BUTTON) && isPressed(GPIO_ROTARY_BUTTON))
             {
                 Piezo::getInstance()->beepError();
             }
@@ -189,7 +189,7 @@ int main()
                         deleteMemory(memories.getMemoryIndex());
                         memories.setWriteModeOn(false);
                     }
-                    else if (i2cInput.isPressedPtt() || wasPressed("rotaryButton") && isPressed("rotaryButton")) // leave write mode withut saving
+                    else if (i2cInput.isPressedPtt() || wasPressed(GPIO_ROTARY_BUTTON) && isPressed(GPIO_ROTARY_BUTTON)) // leave write mode withut saving
                     {
                         Piezo::getInstance()->beepError();
                         memories.setWriteModeOn(false);
@@ -206,7 +206,7 @@ int main()
                 }
             }
 
-            if (wasPressed("rotaryButton") && isPressed("rotaryButton")) // scanner
+            if (wasPressed(GPIO_ROTARY_BUTTON) && isPressed(GPIO_ROTARY_BUTTON)) // scanner
             {
                 if (i2cInput.isPressedPtt() || (mode == ctcss))
                 {
