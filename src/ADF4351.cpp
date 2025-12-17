@@ -16,7 +16,6 @@ constexpr uint8_t PLL_OUT_LE = 4;
 
 // SI5351 and ADF4351
 constexpr uint_fast32_t F_XO_SI = 25000000;
-// constexpr uint32_t F_VCO_SI = 32 * F_XO_SI; // Must bei a multiple of F_XO_SI.
 constexpr uint_fast8_t M_MULTISYNTH {38};
 constexpr uint_fast32_t PFD_ADF = 100'000; // 100 kHz
 constexpr uint_fast8_t R_ADF = 100;
@@ -25,7 +24,7 @@ using namespace std;
 
 void ADF4351::write(const uint32_t frequency)
 {
-   auto fPll = pllFrequency(frequency);
+   const auto fPll = pllFrequency(frequency);
 
    if (fPll != oldPllFrequency)
    {

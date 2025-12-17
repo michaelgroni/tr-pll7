@@ -31,6 +31,7 @@ void setTxAllowed(const bool allowed, const uint pttSm);
 
 int main()
 {
+    __asm volatile("bkpt 0");
     setupI2C(I2C_PORT_IO, I2C_PORT_SI5351A);
     
     setupGPIOinput();
@@ -50,7 +51,7 @@ int main()
 
     setTxAllowed(false, pttSm);
 
-    TrxState *currentState = i2cInput.isPressedAB() ? &vfoB : &vfoA;
+    static TrxState *currentState = i2cInput.isPressedAB() ? &vfoB : &vfoA;
 
     static TrxStateSpecialMemoryFIR stateFir(i2cInput, currentState);
     TrxStateScanMin trxStateScanMin(i2cInput);
@@ -257,7 +258,6 @@ int main()
         }
 
         // update peripherals
-         __asm volatile("bkpt 0");
         display.update(*currentState, scanner);
 
         if (currentState->getCurrentFrequency() != 0) // no unused memory channel

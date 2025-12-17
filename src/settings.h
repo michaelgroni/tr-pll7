@@ -55,21 +55,21 @@ inline const uint PTT_OUT_PIN = 9;
 inline const uint PTT_IN_PIN = 8;
 
 // GPIO input pins
-inline const std::unordered_map<std::string, uint> gpioInPins =
-{
+// inline const std::unordered_map<std::string, uint> gpioInPins =
+inline const std::unordered_map<std::string, uint> gpioInPins = {{
     {"rotaryButton", 22},
     {"squelchOpen", 18}
-};
+}};
 
 // rotary encoder pio input pins
-inline const uint8_t ROTARY_CLOCK = 21;
-inline const uint8_t ROTARY_DATA = 19;
+static inline constexpr uint8_t ROTARY_CLOCK = 21;
+static inline constexpr uint8_t ROTARY_DATA = 19;
 
 // pio output pins
-inline const uint BEEP_PIN = 5;
-inline const uint CTCSS_PIN = 20;
+static inline constexpr uint BEEP_PIN = 5;
+static inline constexpr uint CTCSS_PIN = 20;
 
 // DAC output
-inline const size_t R2R_SIZE = 8;
-inline const uint32_t R2R_MASK = 0xFF000;
-inline const uint_fast8_t R2R_BASE_PIN = 10;
+static inline constexpr size_t R2R_SIZE = 8;
+static inline constexpr uint32_t R2R_MASK = 0xFF000;
+static inline constexpr uint_fast8_t R2R_BASE_PIN = 10;
