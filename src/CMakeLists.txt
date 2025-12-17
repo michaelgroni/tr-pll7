@@ -48,7 +48,8 @@ pico_sdk_init()
 # Add executable. Default name is the project name, version 0.1
 
 add_executable(tr-pll70 main.cpp )
-target_link_options(tr-pll70 PRIVATE "LINKER:--defsym=__StackSize=0x8000")   # 32 KiB
+target_compile_options(tr-pll70 PRIVATE -O0 -g3 -fno-omit-frame-pointer) # ChatGPT
+target_link_options(tr-pll70 PRIVATE "LINKER:--defsym=__StackSize=0x8000")   # 32 KiB ChatGPT
 
 pico_set_program_name(tr-pll70 "tr-pll70")
 pico_set_program_version(tr-pll70 "0.3")

@@ -11,7 +11,7 @@ void I2Cinput::update() // must be called in the main loop
     
     i2c_read_timeout_us(i2cPort, ENCODER_IC1_ADDR, &byte1, 1, false, 20000);
     // i2c_read_blocking(i2cPort, ENCODER_IC1_ADDR, &byte1, 1, false);
-    __asm volatile("bkpt 1");
+   // __asm volatile("bkpt 1");
     i2c_read_blocking(i2cPort, ENCODER_IC2_ADDR, &byte2, 1, false);
     i2c_read_blocking(i2cPort, CONTROL_IC1_ADDR, &byte3, 1, false);
 }
