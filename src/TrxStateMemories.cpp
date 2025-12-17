@@ -124,5 +124,6 @@ void TrxStateMemories::setWriteModeOn(bool writeModeOn)
 
 bool TrxStateMemories::isTxAllowed() const
 {
-    return (!isWriteModeOn()) && TrxState::isTxAllowed();
+    return !isWriteModeOn(); // TODO fixme
+    // return (!isWriteModeOn()) && TrxState::isTxAllowed();
 }

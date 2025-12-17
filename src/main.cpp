@@ -94,7 +94,7 @@ int main()
             if (currentState != &stateFir)
             {
                 stateFir.update(currentState);
-                currentState = (TrxState *)&stateFir;
+                currentState = &stateFir;
             }
             break;
         default: // no special memory channel active
