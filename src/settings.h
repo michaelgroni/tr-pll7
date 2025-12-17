@@ -55,11 +55,14 @@ inline const uint PTT_OUT_PIN = 9;
 inline const uint PTT_IN_PIN = 8;
 
 // GPIO input pins
-// inline const std::unordered_map<std::string, uint> gpioInPins =
-inline const std::unordered_map<std::string, uint> gpioInPins = {{
-    {"rotaryButton", 22},
-    {"squelchOpen", 18}
-}};
+inline const std::unordered_map<std::string, uint>& gpioInPins()
+{
+    static const std::unordered_map<std::string, uint> m = {
+        {"rotaryButton", 22},
+        {"squelchOpen", 18}
+    };
+    return m;
+}
 
 // rotary encoder pio input pins
 static inline constexpr uint8_t ROTARY_CLOCK = 21;

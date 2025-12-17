@@ -31,7 +31,7 @@ void setupI2C(i2c_inst_t* i2cIO, i2c_inst_t* i2cSi5351A)
 
 void setupGPIOinput()
 {
-    for (auto [name, pin] : gpioInPins)
+    for (auto [name, pin] : gpioInPins())
     {
         gpio_init(pin);
         gpio_pull_up(pin);

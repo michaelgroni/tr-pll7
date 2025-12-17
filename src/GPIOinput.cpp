@@ -4,14 +4,14 @@
 
 bool isPressed(std::string pinName)
 {
-    const auto pin = gpioInPins.at(pinName);
+    const auto pin = gpioInPins().at(pinName);
     return !gpio_get(pin);
 }
 
 
 bool wasPressed(std::string pinName)
 {
-    const auto pin = gpioInPins.at(pinName);
+    const auto pin = gpioInPins().at(pinName);
     const int32_t mask = 0xF << 4 * (pin % 8);
     const uint32_t events = (io_bank0_hw->intr[pin / 8] & mask) >> 4 * ( pin % 8);
     if (events & GPIO_IRQ_EDGE_FALL)
@@ -28,7 +28,7 @@ bool wasPressed(std::string pinName)
 
 bool isSquelchOpen()
 {
-    const auto pin = gpioInPins.at("squelchOpen");
+    const auto pin = gpioInPins().at("squelchOpen");
     return gpio_get(pin);
 }
 
