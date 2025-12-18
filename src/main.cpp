@@ -28,7 +28,6 @@ constexpr auto I2C_PORT_SI5351A = i2c1;
 
 void setTxAllowed(const bool allowed, const uint pttSm);
 
-
 int main()
 {
     // __asm volatile("bkpt 0");
@@ -263,8 +262,8 @@ int main()
             adf4351.write(currentState->getCurrentFrequency()); // pll
         }
 
-        // bool txAllowed = currentState->isTxAllowed() && !scanner.isOn();
-        bool txAllowed = true; // TODO fix this
+        // const bool txAllowed = currentState->isTxAllowed() && !scanner.isOn();
+        const bool txAllowed = true; // TODO fix this
         setTxAllowed(txAllowed, pttSm);
     }
 }

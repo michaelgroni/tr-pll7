@@ -20,7 +20,7 @@ Piezo* Piezo::getInstance()
 Piezo::Piezo()
 {
     // setup beep pio
-    uint beepOffset = pio_add_program(BEEP_PIO, &beep_program);
+    const uint beepOffset = pio_add_program(BEEP_PIO, &beep_program);
     beepSm = pio_claim_unused_sm(BEEP_PIO, true);
     pio_sm_config beepConfig = beep_program_get_default_config(beepOffset);
     sm_config_set_set_pins(&beepConfig, BEEP_PIN, 1);
@@ -69,7 +69,7 @@ Ctcss* Ctcss::getInstance()
 Ctcss::Ctcss()
 {
     // setup ctcss pio
-    uint ctcssOffset = pio_add_program(CTCSS_PIO, &ctcss_program);
+    const uint ctcssOffset = pio_add_program(CTCSS_PIO, &ctcss_program);
     ctcssSm = pio_claim_unused_sm(CTCSS_PIO, true);
     pio_sm_config ctcssConfig = ctcss_program_get_default_config(ctcssOffset);
     sm_config_set_set_pins(&ctcssConfig, CTCSS_PIN, 1);

@@ -14,18 +14,18 @@ class I2Cinput
 public:
     I2Cinput(i2c_inst* i2cPort);
     void update(); // must be called in the main loop
-    uint8_t getSpecialMemoryChannel();
+    uint8_t getSpecialMemoryChannel() const;
     mode getMode();
     int32_t getDuplexOffset();
-    bool isPllLocked();
-    bool isPressedPtt();
-    bool isPressedMR();
-    bool isPressedMS();
-    bool isPressedAB();
-    bool wasPressedStepIncrease(); // push button
-    bool wasPressedStepDecrease(); // push button
-    bool wasPressedM();
-    bool isPressedReverse();
+    bool isPllLocked() const;
+    bool isPressedPtt() const;
+    bool isPressedMR() const;
+    bool isPressedMS() const;
+    bool isPressedAB() const;
+    bool wasPressedStepIncrease() const; // push button
+    bool wasPressedStepDecrease() const; // push button
+    bool wasPressedM() const;
+    bool isPressedReverse() const;
 
 private:
     uint8_t byte1;
