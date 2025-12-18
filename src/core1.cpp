@@ -20,9 +20,9 @@ void setup_adc(const unsigned int f_sample)
 }
 
 
-FirLowpass bandpass(2700, F_SAMPLE);
-FirNotch notch = FirNotch(1000, F_SAMPLE);
-int r2rSm;
+static FirLowpass bandpass(2700, F_SAMPLE); // TODO fix globals
+static FirNotch notch = FirNotch(1000, F_SAMPLE);
+static int r2rSm;
 
 
 int stateMachineR2R;
