@@ -64,7 +64,7 @@ int main()
     Piezo::getInstance()->beepOK();
 
     sleep_ms(100);
-    static ADF4351 adf4351(i2cInput, I2C_PORT_SI5351A);  
+    ADF4351 adf4351(i2cInput, I2C_PORT_SI5351A);  
     static Display display(I2C_PORT_IO);
     
     // multicore_launch_core1(core1_entry);

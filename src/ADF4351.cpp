@@ -36,12 +36,12 @@ void ADF4351::write(const uint32_t frequency)
         const double fRefADF = R_ADF * (PFD_ADF + (double) offsetADF/nADF);
 
         // Si5351 PLL_A      
-        const double nSi5351 = fRefADF / F_XO_SI;
-        ImproperFractionSi5351 nPLL(nSi5351 * M_MULTISYNTH);
-        const auto na = nPLL.getA();     
-        const auto nb = nPLL.getB();      // 20 bits
-        const auto nc = nPLL.getC();      // 20 bits
-        si5351.setPllParameters('a', na, nb, nc);
+        // const double nSi5351 = fRefADF / F_XO_SI;
+        // ImproperFractionSi5351 nPLL(nSi5351 * M_MULTISYNTH);
+        // const auto na = nPLL.getA();     
+        // const auto nb = nPLL.getB();      // 20 bits
+        // const auto nc = nPLL.getC();      // 20 bits
+        // si5351.setPllParameters('a', na, nb, nc);
 
         sleep_ms(1); // wait for Si5351 to be ready
 
@@ -96,12 +96,12 @@ ADF4351::ADF4351(I2Cinput& i2cInput, i2c_inst_t* i2cSi5351)
 
 void ADF4351::setupSi5351()
 {
-    si5351.setClkControl(0, false, true, 0, false, 3, 8);
-    si5351.setPllInputSource(1);
-    si5351.setPllParameters('a', 30, 0, 15);
-    si5351.resetPll();
-    si5351.setMultisynth0to5parameters(0, M_MULTISYNTH, 0, 15);
-    si5351.setOutput(0, true);
+    // si5351.setClkControl(0, false, true, 0, false, 3, 8);
+    // si5351.setPllInputSource(1);
+    // si5351.setPllParameters('a', 30, 0, 15);
+    // si5351.resetPll();
+    // si5351.setMultisynth0to5parameters(0, M_MULTISYNTH, 0, 15);
+    // si5351.setOutput(0, true);
     
 }
 

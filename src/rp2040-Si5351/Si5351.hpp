@@ -61,13 +61,12 @@ private:
      */
     void setChrystalLoadCapacitance(uint8_t cLoad);
     
-
-
-public:
     /**
      * @brief Blocks until Si5351 is intialized and CLKIN is valid
      */
     void waitAfterPowerOn();
+
+public:
     /**
      * @param i2cPort is an I2C controller, for example `i2c0`. It must have been initialized.
      * @param i2cAddr is the I2C address.
