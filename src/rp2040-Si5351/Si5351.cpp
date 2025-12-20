@@ -112,7 +112,7 @@ Si5351::Si5351(i2c_inst *i2cPort, uint8_t i2cAddr, const uint8_t cLoad)
 
 void Si5351::disableInterrupts()
 {
-    array<uint8_t, 2> data {2, 0xF4};
+    array<uint8_t, 2> data {2, 0xF8};
     i2c_write_blocking(I2C_PORT, I2C_ADDR, data.data(), data.size(), false);
 }
 
