@@ -38,7 +38,7 @@ bool timerHandler(struct repeating_timer* t)
 void core1_entry()
 {
 	// setup R2R PIO
-	uint offsetR2R = pio_add_program(R2R_PIO, &r2r_program);
+	const uint offsetR2R = pio_add_program(R2R_PIO, &r2r_program);
 	stateMachineR2R = pio_claim_unused_sm(R2R_PIO, true);
 	pio_sm_config r2rConfig = r2r_program_get_default_config(offsetR2R);
 	sm_config_set_out_pins(&r2rConfig, R2R_BASE_PIN, R2R_SIZE);
@@ -56,12 +56,12 @@ void core1_entry()
 	setup_adc(F_SAMPLE);
 
 
-	filterConfig fc;
+	static filterConfig fc;
 	queue_remove_blocking(&filterConfigQueue, &fc);
 
 	// bandpass = FirBandpass(fc.fLow, fc.fHigh, F_SAMPLE);
 	// notch = FirNotch(1000, F_SAMPLE);
-	Median median = Median(fc.medianSize);
+	static Median median = Median(fc.medianSize);
 
 	repeating_timer_t timer;
 	auto pool = alarm_pool_create_with_unused_hardware_alarm(2);

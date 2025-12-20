@@ -5,8 +5,6 @@
 ImproperFractionSi5351::ImproperFractionSi5351(const double r)
 :a(std::floor(r))
 {
-    //a = std::floor(r);
-
     const double fraction = r - a;
 
     // Convert the fraction to a fraction with a denominator of less than 2^20

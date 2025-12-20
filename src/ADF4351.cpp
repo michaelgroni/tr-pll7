@@ -15,24 +15,24 @@ constexpr uint8_t PLL_SPI_TX = 7;  // MOSI
 constexpr uint8_t PLL_OUT_LE = 4;
 
 // SI5351 and ADF4351
-constexpr uint_fast32_t F_XO_SI = 25000000;
-constexpr uint_fast8_t M_MULTISYNTH {38};
-constexpr uint_fast32_t PFD_ADF = 100'000; // 100 kHz
-constexpr uint_fast8_t R_ADF = 100;
+constexpr uint32_t F_XO_SI = 25e6; // 25 MHz
+constexpr uint8_t M_MULTISYNTH {60};
+constexpr uint32_t PFD_ADF = 100'000; // 100 kHz
+constexpr uint8_t R_ADF = 100;
 
 using namespace std;
 
 void ADF4351::write(const uint32_t frequency)
 {
-   const auto fPll = pllFrequency(frequency);
+    const auto fPll = pllFrequency(frequency);
 
    if (fPll != oldPllFrequency)
    {
         oldPllFrequency = fPll;
 
-        const uint_fast32_t offsetADF = fPll % PFD_ADF;
-        const uint_fast32_t freqADF = fPll - offsetADF;
-        const uint_fast16_t nADF = freqADF / PFD_ADF;
+        const uint32_t offsetADF = fPll % PFD_ADF;
+        const uint32_t freqADF = fPll - offsetADF;
+        const uint16_t nADF = freqADF / PFD_ADF;
         const double fRefADF = R_ADF * (PFD_ADF + (double) offsetADF/nADF);
 
         // Si5351 PLL_A      
@@ -98,10 +98,11 @@ void ADF4351::setupSi5351()
 {
     si5351.setClkControl(0, false, true, 0, false, 3, 8);
     si5351.setPllInputSource(1);
-    si5351.setPllParameters('a', 20, 0, 15);
+    si5351.setPllParameters('a', 30, 0, 15);
     si5351.resetPll();
     si5351.setMultisynth0to5parameters(0, M_MULTISYNTH, 0, 15);
     si5351.setOutput(0, true);
+    
 }
 
 uint32_t ADF4351::pllFrequency(uint32_t frequency) const

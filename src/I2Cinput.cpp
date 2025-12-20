@@ -2,7 +2,7 @@
 
 #include "hardware/timer.h"
 
-I2Cinput::I2Cinput(i2c_inst* i2Port)
+I2Cinput::I2Cinput(i2c_inst* i2cPort)
 :i2cPort(i2cPort)
 {}
 
@@ -10,11 +10,11 @@ void I2Cinput::update() // must be called in the main loop
 {
     
     // i2c_read_timeout_us(i2cPort, ENCODER_IC1_ADDR, &byte1, 1, false, 20000);
-    __asm volatile("bkpt 1");
+    // __asm volatile("bkpt 1");
     i2c_read_blocking(i2cPort, ENCODER_IC1_ADDR, &byte1, 1, false);
     i2c_read_blocking(i2cPort, ENCODER_IC2_ADDR, &byte2, 1, false);
     i2c_read_blocking(i2cPort, CONTROL_IC1_ADDR, &byte3, 1, false);
-    __asm volatile("bkpt 2");
+    // __asm volatile("bkpt 2");
 }
 
 uint8_t I2Cinput::getSpecialMemoryChannel() const // memory switch
