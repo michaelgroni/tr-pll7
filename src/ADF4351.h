@@ -11,7 +11,7 @@
 class ADF4351
 {
 public:
-    ADF4351(I2Cinput& i2cInput, i2c_inst_t* i2cSi5351);
+    ADF4351(I2Cinput& i2cInput, i2c_inst_t* i2cSi5351, const uint8_t i2cAddrSi5351);
     void write(const uint32_t frequency);
 
 private:

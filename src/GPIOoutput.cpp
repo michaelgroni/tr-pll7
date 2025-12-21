@@ -9,8 +9,6 @@
 #include "ctcss.pio.h"
 
 
-
-
 Piezo* Piezo::getInstance()
 {
     static Piezo instance;

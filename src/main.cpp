@@ -25,6 +25,7 @@
 
 constexpr auto I2C_PORT_IO = i2c0;
 constexpr auto I2C_PORT_SI5351A = i2c1;
+constexpr uint8_t I2C_ADDR_SI5351A = 0x62; // 0x60, sometimes 0x62 depending on the Si5351A module
 
 void setTxAllowed(const bool allowed, const uint pttSm);
 
@@ -64,7 +65,7 @@ int main()
     Piezo::getInstance()->beepOK();
 
     sleep_ms(100);
-    ADF4351 adf4351(i2cInput, I2C_PORT_SI5351A);  
+    ADF4351 adf4351(i2cInput, I2C_PORT_SI5351A, I2C_ADDR_SI5351A);  
     static Display display(I2C_PORT_IO);
     
     // multicore_launch_core1(core1_entry);

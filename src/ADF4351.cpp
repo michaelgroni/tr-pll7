@@ -15,8 +15,8 @@ constexpr uint8_t PLL_SPI_TX = 7;  // MOSI
 constexpr uint8_t PLL_OUT_LE = 4;
 
 // SI5351 and ADF4351
-constexpr uint32_t F_XO_SI = 25e6; // 25 MHz
-constexpr uint8_t M_MULTISYNTH {60};
+constexpr uint32_t F_XO_SI = 25e6; // 25 MHz or 27 MHz
+constexpr uint8_t M_MULTISYNTH {50};
 constexpr uint32_t PFD_ADF = 100'000; // 100 kHz
 constexpr uint8_t R_ADF = 100;
 
@@ -33,15 +33,16 @@ void ADF4351::write(const uint32_t frequency)
         const uint32_t offsetADF = fPll % PFD_ADF;
         const uint32_t freqADF = fPll - offsetADF;
         const uint16_t nADF = freqADF / PFD_ADF;
-        const double fRefADF = R_ADF * (PFD_ADF + (double) offsetADF/nADF);
+        const double fRefADF = R_ADF * (PFD_ADF + (double) offsetADF/nADF); // 10 MHz or slightly more in very small steps
 
         // Si5351 PLL_A      
-        // const double nSi5351 = fRefADF / F_XO_SI;
-        // ImproperFractionSi5351 nPLL(nSi5351 * M_MULTISYNTH);
-        // const auto na = nPLL.getA();     
-        // const auto nb = nPLL.getB();      // 20 bits
-        // const auto nc = nPLL.getC();      // 20 bits
-        // si5351.setPllParameters('a', na, nb, nc);
+        const double nSi5351 = fRefADF / F_XO_SI;
+        ImproperFractionSi5351 nPLL(nSi5351 * M_MULTISYNTH);
+        const auto na = nPLL.getA();     
+        const auto nb = nPLL.getB();      // 20 bits
+        const auto nc = nPLL.getC();      // 20 bits
+        si5351.setPllParameters('a', na, nb, nc);
+        si5351.resetPll('a');
 
         sleep_ms(1); // wait for Si5351 to be ready
 
@@ -78,8 +79,8 @@ void ADF4351::write(const uint32_t frequency)
    }
 }
 
-ADF4351::ADF4351(I2Cinput& i2cInput, i2c_inst_t* i2cSi5351)
-:i2cInput(i2cInput), i2cSi5351(i2cSi5351), si5351(i2cSi5351)
+ADF4351::ADF4351(I2Cinput& i2cInput, i2c_inst_t* i2cSi5351, const uint8_t i2cAddrSi5351)
+:i2cInput(i2cInput), i2cSi5351(i2cSi5351), si5351(i2cSi5351, i2cAddrSi5351)
 {
     // SPI only TX
     gpio_set_function(PLL_SPI_SCK, GPIO_FUNC_SPI);
@@ -96,13 +97,12 @@ ADF4351::ADF4351(I2Cinput& i2cInput, i2c_inst_t* i2cSi5351)
 
 void ADF4351::setupSi5351()
 {
-    // si5351.setClkControl(0, false, true, 0, false, 3, 8);
-    // si5351.setPllInputSource(1);
-    // si5351.setPllParameters('a', 30, 0, 15);
-    // si5351.resetPll();
-    // si5351.setMultisynth0to5parameters(0, M_MULTISYNTH, 0, 15);
-    // si5351.setOutput(0, true);
-    
+    si5351.setClkControl(0, false, true, 0, false, 3, 2);
+    si5351.setPllInputSource(1);
+    si5351.setPllParameters('a', 24, 0, 15);
+    si5351.resetPll();
+    si5351.setMultisynth0to5parameters(0, M_MULTISYNTH, 0, 15);
+    si5351.setOutput(0, true);
 }
 
 uint32_t ADF4351::pllFrequency(uint32_t frequency) const
