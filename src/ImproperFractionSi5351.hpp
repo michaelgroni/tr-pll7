@@ -30,4 +30,6 @@ public:
     uint32_t getA() const;
     uint32_t getB() const;
     uint32_t getC() const;
+
+    double getEpsilon() const;
 };

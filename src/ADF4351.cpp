@@ -16,7 +16,9 @@ constexpr uint8_t PLL_OUT_LE = 4;
 
 // SI5351 and ADF4351
 constexpr uint32_t F_XO_SI = 25e6; // 25 MHz or 27 MHz
-constexpr uint8_t M_MULTISYNTH {50};
+constexpr uint8_t M_MULTISYNTH_MIN {60}; // must be even
+constexpr uint8_t M_MULTISYNTH_MAX {90}; // should be even
+constexpr uint16_t C_PLLA_MAX {500};
 constexpr uint32_t PFD_ADF = 100'000; // 100 kHz
 constexpr uint8_t R_ADF = 100;
 
@@ -37,12 +39,36 @@ void ADF4351::write(const uint32_t frequency)
 
         // Si5351 PLL_A      
         const double nSi5351 = fRefADF / F_XO_SI;
-        ImproperFractionSi5351 nPLL(nSi5351 * M_MULTISYNTH);
-        const auto na = nPLL.getA();     
-        const auto nb = nPLL.getB();      // 20 bits
-        const auto nc = nPLL.getC();      // 20 bits
+
+        ImproperFractionSi5351 bestNPLL(nSi5351 * M_MULTISYNTH_MIN);
+        uint8_t bestM = M_MULTISYNTH_MIN;
+        for (auto m = M_MULTISYNTH_MIN+1; m <= M_MULTISYNTH_MAX; m+=2)
+        {
+            ImproperFractionSi5351 candidateN(nSi5351 * m);
+
+            if (bestNPLL.getC() > C_PLLA_MAX && candidateN.getC() < bestNPLL.getC())
+            {
+                bestNPLL = candidateN;
+                bestM = m;
+            }
+            else if (candidateN.getEpsilon() < bestNPLL.getEpsilon() && candidateN.getC() <= C_PLLA_MAX)
+            {
+                bestNPLL = candidateN;
+                bestM = m;
+            }
+
+            if (bestNPLL.getB() == 0) // best case
+            {
+                break;
+            }
+
+        }
+        const auto na = bestNPLL.getA();     
+        const auto nb = bestNPLL.getB();      // 20 bits
+        const auto nc = bestNPLL.getC();      // 20 bits
         si5351.setPllParameters('a', na, nb, nc);
         si5351.resetPll('a');
+        si5351.setMultisynth0to5parameters(0, bestM, 0, 1);
 
         sleep_ms(1); // wait for Si5351 to be ready
 
@@ -101,7 +127,7 @@ void ADF4351::setupSi5351()
     si5351.setPllInputSource(1);
     si5351.setPllParameters('a', 24, 0, 15);
     si5351.resetPll();
-    si5351.setMultisynth0to5parameters(0, M_MULTISYNTH, 0, 15);
+    si5351.setMultisynth0to5parameters(0, 60, 0, 15);
     si5351.setOutput(0, true);
 }
 

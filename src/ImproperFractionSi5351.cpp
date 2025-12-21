@@ -1,5 +1,6 @@
 #include "ImproperFractionSi5351.hpp"
 
+#include <algorithm>
 #include <cmath>
 
 ImproperFractionSi5351::ImproperFractionSi5351(const double r)
@@ -38,4 +39,10 @@ uint32_t ImproperFractionSi5351::getB() const
 uint32_t ImproperFractionSi5351::getC() const
 {
     return c;
+}
+
+double ImproperFractionSi5351::getEpsilon() const
+{
+    double frac = static_cast<double>(b) / static_cast<double>(c);
+    return std::min(frac, 1.0 - frac);
 }
