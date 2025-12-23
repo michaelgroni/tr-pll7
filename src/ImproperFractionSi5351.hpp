@@ -1,6 +1,7 @@
 #pragma once
 
 #include "pico/stdlib.h"
+#include <string>
 
 template <typename T>
 T gcd(T x, T y)
@@ -32,4 +33,6 @@ public:
     uint32_t getC() const;
 
     double getEpsilon() const;
+
+    std::string toString();
 };

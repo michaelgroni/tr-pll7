@@ -23,14 +23,17 @@
 #include "ptt.pio.h"
 
 
+
+
 constexpr auto I2C_PORT_IO = i2c0;
 constexpr auto I2C_PORT_SI5351A = i2c1;
-constexpr uint8_t I2C_ADDR_SI5351A = 0x62; // 0x60, sometimes 0x62 depending on the Si5351A module
+constexpr uint8_t I2C_ADDR_SI5351A = 0x62; // 0x60, sometimes 0x62
 
 void setTxAllowed(const bool allowed, const uint pttSm);
 
 int main()
 {
+
     // __asm volatile("bkpt 0");
     setupI2C(I2C_PORT_IO, I2C_PORT_SI5351A);
     

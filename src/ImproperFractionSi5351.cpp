@@ -18,12 +18,12 @@ ImproperFractionSi5351::ImproperFractionSi5351(const double r)
         b = 0;
         c = 1;
     }
-    else
-    {
-        const uint32_t g = gcd(b, c);
-        b /= g;
-        c /= g;
-    }
+    // else
+    // {
+    //     const uint32_t g = gcd(b, c);
+    //     b /= g;
+    //     c /= g;
+    // }
 }
 
 uint32_t ImproperFractionSi5351::getA() const
@@ -46,3 +46,8 @@ double ImproperFractionSi5351::getEpsilon() const
     double frac = static_cast<double>(b) / static_cast<double>(c);
     return std::min(frac, 1.0 - frac);
 }
+
+std::string ImproperFractionSi5351::toString()
+{
+    return std::to_string(a) + " + " + std::to_string(b) + "/" + std::to_string(c);
+}   

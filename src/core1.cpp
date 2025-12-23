@@ -22,10 +22,10 @@ void setup_adc(const unsigned int f_sample)
 
 static FirLowpass bandpass(2700, F_SAMPLE); // TODO fix globals
 static FirNotch notch = FirNotch(1000, F_SAMPLE);
-static int r2rSm;
 
+// static int r2rSm;
+static int stateMachineR2R;
 
-int stateMachineR2R;
 bool timerHandler(struct repeating_timer* t)
 {
 	static uint16_t sample;

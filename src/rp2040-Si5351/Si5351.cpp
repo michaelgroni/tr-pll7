@@ -312,3 +312,35 @@ void Si5351::setPllParameters(const char pll, const uint32_t integer, const uint
     const auto data = registerContent(address, integer, numerator, denominator);
     i2c_write_blocking(I2C_PORT, I2C_ADDR, data.data(), data.size(), false);
 }
+
+void Si5351::setPllIntMode(const char pll, const bool intModeOn)
+{
+    uint8_t address; // register to be written
+    const uint8_t mask = 0x40; // bit 6
+
+    switch (pll)
+    {
+        case 'a':
+            address = 22; // PLL A
+            break;
+        case 'b':
+            address = 23; // PLL B
+            break;
+        default:
+            return;
+    }
+
+    auto registerContent = readByte(address);
+
+    if (intModeOn)
+    {
+        registerContent |= mask; // set bit 6
+    }
+    else
+    {
+        registerContent &= ~mask; // clear bit 6
+    }
+
+    array<uint8_t, 2> data {address, registerContent};
+    i2c_write_blocking(I2C_PORT, I2C_ADDR, data.data(), data.size(), false);
+}
