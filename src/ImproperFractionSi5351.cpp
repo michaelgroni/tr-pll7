@@ -14,7 +14,8 @@ ImproperFractionSi5351::ImproperFractionSi5351(const uint32_t fXO, const uint8_t
     double bestError = __DBL_MAX__;
     for (uint8_t mCandidate = 60; (mCandidate <= 90) && !finished; mCandidate += 2)
     {
-        for (int32_t k = K; (k >= K_MIN) && !finished; k--)
+        for (int32_t k = K_MAX; (k >= K_MIN) && !finished; k--)
+        // for (int32_t k=K_MIN; (k <= K_MAX) && !finished; k++)
         {
             const uint32_t cCandidate = k * STEP;
 
@@ -42,7 +43,7 @@ ImproperFractionSi5351::ImproperFractionSi5351(const uint32_t fXO, const uint8_t
                 m = mCandidate;
                 error = errorCandidate;
 
-                if (error < 0.1)
+                if (error <= 0.1)
                 {
                     finished = true;
                 }

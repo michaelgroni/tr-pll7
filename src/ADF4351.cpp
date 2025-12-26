@@ -18,8 +18,8 @@ constexpr uint8_t PLL_OUT_LE = 4;
 constexpr uint32_t F_XO_SI {25'000'000};      // 25 MHz or 27 MHz
 // constexpr uint8_t M_MULTISYNTH_MIN{60}; // must be even
 // constexpr uint8_t M_MULTISYNTH_MAX{90}; // should be even
-constexpr uint32_t PFD_ADF {100'000};   // 100 kHz
-constexpr uint8_t R_ADF {100};
+constexpr uint32_t PFD_ADF {1'000'000};   // 100 kHz
+constexpr uint8_t R_ADF {10};
 using namespace std;
 
 void ADF4351::write(const uint32_t frequency)
@@ -48,19 +48,19 @@ void ADF4351::write(const uint32_t frequency)
         writePLL(r5);
 
         // write R4
-        uint8_t r4[] = {0x00, 0x30, 0x24, 0x2C};
+        uint8_t r4[] = {0x00, 0x30, 0xA4, 0x24};
         writePLL(r4);
 
         // write R3
-        uint8_t r3[] = {0x00, 0xE1, 0x00, 0x13};
+        uint8_t r3[] = {0x00, 0x40, 0x00, 0x13};
         writePLL(r3);
 
         // write R2
-        uint8_t r2[] = {0x18, 0x19, 0x1F, 0xC2};
+        uint8_t r2[] = {0x18, 0x02, 0x8D, 0xC2};
         writePLL(r2);
 
         // write R1
-        uint8_t r1[] = {0x08, 0x00, 0x80, 0x11};
+        uint8_t r1[] = {0x08, 0x00, 0x83, 0x21};
         writePLL(r1);
 
         // write R0
@@ -93,7 +93,7 @@ ADF4351::ADF4351(I2Cinput &i2cInput, i2c_inst_t *i2cSi5351, const uint8_t i2cAdd
 
 void ADF4351::setupSi5351()
 {
-    si5351.setClkControl(0, false, true, 0, false, 3, 2);
+    si5351.setClkControl(0, false, true, 0, false, 3, 0);
     si5351.setPllInputSource(1);
     si5351.setPllParameters('a', 24, 0, 15);
     si5351.resetPll();
