@@ -61,9 +61,9 @@ int main()
 
     flashInit();
 
-    // static auto firConfig = stateFir.getConfig();
-    // queue_init(&filterConfigQueue, sizeof(filterConfig), 2);
-    // queue_add_blocking(&filterConfigQueue, &firConfig);
+    static auto firConfig = stateFir.getConfig();
+    queue_init(&filterConfigQueue, sizeof(filterConfig), 2);
+    queue_add_blocking(&filterConfigQueue, &firConfig);
 
     Piezo::getInstance()->beepOK();
 
@@ -71,7 +71,7 @@ int main()
     ADF4351 adf4351(i2cInput, I2C_PORT_SI5351A, I2C_ADDR_SI5351A);  
     static Display display(I2C_PORT_IO);
     
-    // multicore_launch_core1(core1_entry);
+    multicore_launch_core1(core1_entry);
 
     // main loop
     

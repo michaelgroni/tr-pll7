@@ -71,17 +71,16 @@ void core1_entry()
 	{
 		sleep_ms(MAIN_LOOP_PAUSE_TIME);
 		
-		/*
 		auto oldFc = fc;
 
 		if (queue_try_remove(&filterConfigQueue, &fc))
 		{
 			adc_run(false);
 
-			if ((fc.fLow != oldFc.fLow) || (fc.fHigh != oldFc.fHigh))
-			{
-				bandpass.set(fc.fLow, fc.fHigh, F_SAMPLE);
-			}
+			// if ((fc.fLow != oldFc.fLow) || (fc.fHigh != oldFc.fHigh))
+			// {
+			// 	bandpass.set(fc.fLow, fc.fHigh, F_SAMPLE);
+			// }
 
 			if (fc.fNotch != oldFc.fNotch)
 			{
@@ -95,6 +94,5 @@ void core1_entry()
 
 			adc_run(true);
 		}
-		*/
 	}
 }
