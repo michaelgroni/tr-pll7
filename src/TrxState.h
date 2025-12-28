@@ -38,6 +38,6 @@ private:
     I2Cinput& i2cInput;
 
     // available steps
-    const std::array<unsigned int, 7> steps = {0, 10, 100, 1000, 10000, 12500, 1000000}; // 0 means auto
+    const std::array<unsigned int, 8> steps = {0, 10, 100, 1000, 10000, 12500, 25000, 1000000}; // 0 means auto
     size_t stepIndex = 0; // 0 means auto
 };
