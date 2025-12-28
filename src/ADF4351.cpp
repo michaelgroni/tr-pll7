@@ -14,12 +14,14 @@ constexpr uint8_t PLL_SPI_SCK = 6; // SCLK
 constexpr uint8_t PLL_SPI_TX = 7;  // MOSI
 constexpr uint8_t PLL_OUT_LE = 4;
 
-// SI5351 and ADF4351
-constexpr uint32_t F_XO_SI {25'000'000};      // 25 MHz or 27 MHz
-// constexpr uint8_t M_MULTISYNTH_MIN{60}; // must be even
-// constexpr uint8_t M_MULTISYNTH_MAX{90}; // should be even
-constexpr uint32_t PFD_ADF {1'000'000};   // 100 kHz
-constexpr uint8_t R_ADF {10};
+// SI5351
+const uint_fast32_t F_XO_SI = 25'000'000;
+const uint_fast8_t M_MULTISYNTH {90};
+
+// ADF4351
+const uint_fast32_t PFD_ADF = 100'000; // 100 kHz
+const uint_fast8_t R_ADF = 100;
+
 using namespace std;
 
 void ADF4351::write(const uint32_t frequency)
@@ -30,18 +32,21 @@ void ADF4351::write(const uint32_t frequency)
     {
         oldPllFrequency = fPll;
 
-        // Si5351 PLL_A
-        ImproperFractionSi5351 nPLL(F_XO_SI, R_ADF, PFD_ADF, fPll);
-        const auto bestM = nPLL.getM();
-        const auto na = nPLL.getA();
-        const auto nb = nPLL.getB(); // 20 bits
-        const auto nc = nPLL.getC(); // 20 bits
-        const auto nADF = nPLL.getNADF();
-        si5351.setPllParameters('a', na, nb, nc);
-        si5351.resetPll('a');
-        si5351.setMultisynth0to5parameters(0, bestM, 0, 1);
+        const uint_fast32_t offsetADF = fPll % PFD_ADF;
+        const uint_fast32_t freqADF = fPll - offsetADF;
+        const uint_fast16_t nADF = freqADF / PFD_ADF;
+        const double fRefADF = R_ADF * (PFD_ADF + (double) offsetADF/nADF);
 
-        sleep_ms(1); // wait for Si5351 to be ready
+        // Si5351 PLL_A      
+        const double fPllSi = fRefADF * M_MULTISYNTH;
+        ImproperFractionSi5351 nPLLSi(fPllSi / F_XO_SI);
+        const auto na = nPLLSi.getA();     
+        const auto nb = nPLLSi.getB();      // 20 bits
+        const auto nc = nPLLSi.getC();      // 20 bits
+        si5351.setPllParameters('a', na, nb, nc);
+        // si5351.resetPll('a');
+
+        sleep_ms(2); // wait for the Si5351 to be ready
 
         // write R5
         uint8_t r5[] = {0x00, 0x58, 0x00, 0x05};
@@ -95,10 +100,16 @@ void ADF4351::setupSi5351()
 {
     si5351.setClkControl(0, false, true, 0, false, 3, 0);
     si5351.setPllInputSource(1);
-    si5351.setPllParameters('a', 24, 0, 15);
+    si5351.setPllParameters('a', 900'000'000/F_XO_SI, 0, 15);
     si5351.resetPll();
     si5351.setMultisynth0to5parameters(0, 60, 0, 15);
     si5351.setOutput(0, true);
+
+    // power down unused outputs (see AN619 chapter 4.2.5)
+    for (uint8_t i = 1; i <= 7; i++)
+    {
+        si5351.setClkControl(i, true, true, 0, false, 3, 2);
+    }
 }
 
 uint32_t ADF4351::pllFrequency(uint32_t frequency) const

@@ -25,10 +25,14 @@ inline constexpr uint32_t VFO_B_INIT = 438775000;
 inline const unsigned int F_SAMPLE = 20000;
 
 // waiting times in milliseconds
-inline constexpr uint32_t MAIN_LOOP_PAUSE_TIME = 100;
-inline constexpr uint32_t SCANNER_WAIT_QSO_TIME = 4000;
-inline constexpr uint32_t SCANNER_WAIT_PLL_TIME = 5; // wait for PLL and squelch before checking the scanner stop signal
-inline constexpr uint32_t SCANNER_WAIT_SQUELCH_TIME = 70;
+inline const uint32_t MAIN_LOOP_PAUSE_TIME = 100;
+inline const uint32_t SCANNER_WAIT_QSO_TIME = 4000;
+inline const uint32_t SCANNER_WAIT_PLL_TIME = 5; // wait for PLL and squelch before checking the scanner stop signal
+inline const uint32_t SCANNER_WAIT_SQUELCH_TIME = 70;
+
+// I2C bus
+inline const uint I2C_CLOCK = 100000;
+inline const auto I2C_PORT = i2c0;
 
 // I2C OLED display 128 x 32
 inline constexpr int OLED_ADDRESS = 0x3C;
