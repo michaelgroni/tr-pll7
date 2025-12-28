@@ -2,29 +2,28 @@
 
 #include "hardware/timer.h"
 
-I2Cinput::I2Cinput()
+I2Cinput::I2Cinput(i2c_inst* i2cPort)
+:i2cPort(i2cPort)
 {}
-
-I2Cinput* I2Cinput::getInstance()
-{
-    static I2Cinput instance;
-    return &instance;
-}
 
 void I2Cinput::update() // must be called in the main loop
 {
-    i2c_read_blocking(I2C_PORT, ENCODER_IC1_ADDR, &byte1, 1, false);
-    i2c_read_blocking(I2C_PORT, ENCODER_IC2_ADDR, &byte2, 1, false);
-    i2c_read_blocking(I2C_PORT, CONTROL_IC1_ADDR, &byte3, 1, false);
+    
+    // i2c_read_timeout_us(i2cPort, ENCODER_IC1_ADDR, &byte1, 1, false, 20000);
+    // __asm volatile("bkpt 1");
+    i2c_read_blocking(i2cPort, ENCODER_IC1_ADDR, &byte1, 1, false);
+    i2c_read_blocking(i2cPort, ENCODER_IC2_ADDR, &byte2, 1, false);
+    i2c_read_blocking(i2cPort, CONTROL_IC1_ADDR, &byte3, 1, false);
+    // __asm volatile("bkpt 2");
 }
 
-uint8_t I2Cinput::getSpecialMemoryChannel() // memory switch
+uint8_t I2Cinput::getSpecialMemoryChannel() const // memory switch
 {
     if ((byte1 & 1) == 0)
         return 6;
     if ((byte1 & 2) == 0)
         return 5;
-    if ((byte1 & 64) == 0)
+    if ((byte1 & 64) == 0) 
         return 4;
     if ((byte1 & 4) == 0)
         return 3;
@@ -40,7 +39,7 @@ mode I2Cinput::getMode()
     if (m == lsb) // mode is LSB or the switch is being moved at the moment
     {
         sleep_ms(6);
-        i2c_read_blocking(I2C_PORT, ENCODER_IC1_ADDR, &byte1, 1, false);
+        i2c_read_blocking(i2cPort, ENCODER_IC1_ADDR, &byte1, 1, false);
         return getModePrivate();
     }
     else
@@ -75,32 +74,32 @@ int32_t I2Cinput::getDuplexOffset()
     return 0;
 }
 
-bool I2Cinput::isPllLocked()
+bool I2Cinput::isPllLocked() const
 {
     return (byte3 & 4) == 1;
 }
 
-bool I2Cinput::isPressedPtt()
+bool I2Cinput::isPressedPtt() const
 {
     return (byte3 & 8) == 0;
 }
 
-bool I2Cinput::isPressedMR()
+bool I2Cinput::isPressedMR() const
 {
     return (byte2 & 128) == 0;
 }
 
-bool I2Cinput::isPressedMS()
+bool I2Cinput::isPressedMS() const
 {
     return (byte2 & 64) == 0;
 }
 
-bool I2Cinput::isPressedAB()
+bool I2Cinput::isPressedAB() const
 {
     return (byte2 & 32) == 0;
 }
 
-bool I2Cinput::wasPressedStepIncrease() // push button
+bool I2Cinput::wasPressedStepIncrease() const // push button
 {
     static bool isPressed = false;
 
@@ -123,7 +122,7 @@ bool I2Cinput::wasPressedStepIncrease() // push button
     }    
 }
 
-bool I2Cinput::wasPressedStepDecrease()
+bool I2Cinput::wasPressedStepDecrease() const
 {
     static bool isPressed = false;
 
@@ -146,7 +145,7 @@ bool I2Cinput::wasPressedStepDecrease()
     }  
 }
 
-bool I2Cinput::wasPressedM()
+bool I2Cinput::wasPressedM() const
 {
     static bool isPressed = false;
 
@@ -170,7 +169,7 @@ bool I2Cinput::wasPressedM()
 }
 
 
-bool I2Cinput::isPressedReverse() // former MHz switch
+bool I2Cinput::isPressedReverse() const // former MHz switch
 {
     return (byte2 & 1) == 0;
 }

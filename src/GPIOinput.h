@@ -4,9 +4,8 @@
 
 #include <string>
 
-bool isPressed(std::string pinName);
-bool wasPressed(std::string pinName);
+bool isPressed(const uint8_t gpio);
+bool wasPressed(const uint8_t gpio);
 bool isSquelchOpen();
 int readRotaryEncoder(uint rotarySm);
-int_fast8_t readUpDownButtons();
 

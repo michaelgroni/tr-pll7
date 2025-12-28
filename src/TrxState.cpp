@@ -2,19 +2,18 @@
 
 #include "settings.h"
 #include "GPIOinput.h"
-#include "I2Cinput.h"
 
+TrxState::TrxState(I2Cinput& i2cInput)
+:i2cInput(i2cInput)
+{}
 
-uint32_t TrxState::getCurrentFrequency() const
+uint32_t TrxState::getCurrentFrequency()
 {
-    if (I2Cinput::getInstance()->isPressedPtt())
+    if (i2cInput.isPressedPtt())
     {
         return getTxFrequency();
     }
-    else
-    {
-        return getRxFrequency();
-    }
+    return getRxFrequency();
 }
 
 void TrxState::stepUp()
@@ -46,7 +45,7 @@ unsigned int TrxState::getStep() const
 {
     if (stepIndex==0) // auto
     {
-        auto mode = I2Cinput::getInstance()->getMode();
+        auto mode = i2cInput.getMode();
 
         if ((mode==fm2) || (mode==ctcss))
         {

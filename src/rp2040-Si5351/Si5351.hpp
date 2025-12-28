@@ -27,13 +27,6 @@ private:
      * @brief Enables fanout.
      */
     void enableFanout();
-
-    /**
-     * @brief Reads a single byte from the Si5351 blocking.
-     * @param reg ist the register to read from.
-     * 
-     */
-    uint8_t readByte(uint8_t reg) const;
     
      /**
      * @brief Returns register contents calculated from divider parameters.
@@ -83,6 +76,13 @@ public:
      * @brief Disables the OEB pin.
     */
     void disableOEBPin();
+
+    /**
+     * @brief Reads a single byte from the Si5351 blocking.
+     * @param reg ist the register to read from.
+     * 
+     */
+    uint8_t readByte(uint8_t reg) const;
 
     /**
      * @brief Resets PLLA or PLLB.
@@ -151,4 +151,11 @@ public:
      * @param denominator is c in (a + b/c).
      */
     void setPllParameters(const char pll, const uint32_t integer, const uint32_t numerator, const uint32_t denominator);
+
+    /**
+     * @brief Enables the integer mode of PLL A or B.
+     * @param pll must be 'a' (PLL A) or 'b' (PLL B). Other values are ignored.
+     * @param intModeOn enables integer mode if true is given, otherwise disables it.
+     */
+    void setPllIntMode(const char pll, const bool intModeOn);
 };

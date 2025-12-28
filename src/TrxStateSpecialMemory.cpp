@@ -1,5 +1,8 @@
 #include "TrxStateSpecialMemory.h"
 
+TrxStateSpecialMemory::TrxStateSpecialMemory(I2Cinput& i2cInput)
+:TrxState(i2cInput)
+{}
 
 uint32_t TrxStateSpecialMemory::getTxFrequency() const
 {

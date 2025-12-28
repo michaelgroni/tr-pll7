@@ -2,21 +2,19 @@
 
 #include "GPIOoutput.h"
 
-bool isPressed(std::string pinName)
+bool isPressed(const uint8_t gpio)
 {
-    auto pin = gpioInPins.at(pinName);
-    return !gpio_get(pin);
+    return !gpio_get(gpio);
 }
 
 
-bool wasPressed(std::string pinName)
+bool wasPressed(const uint8_t gpio)
 {
-    auto pin = gpioInPins.at(pinName);
-    int32_t mask = 0xF << 4 * (pin % 8);
-    uint32_t events = (io_bank0_hw->intr[pin / 8] & mask) >> 4 * ( pin % 8);
+    const int32_t mask = 0xF << 4 * (gpio % 8);
+    const uint32_t events = (io_bank0_hw->intr[gpio / 8] & mask) >> 4 * ( gpio % 8);
     if (events & GPIO_IRQ_EDGE_FALL)
     {
-        gpio_acknowledge_irq(pin, GPIO_IRQ_EDGE_FALL); // clear fall event
+        gpio_acknowledge_irq(gpio, GPIO_IRQ_EDGE_FALL); // clear fall event
         return true;
     }
     else
@@ -28,8 +26,7 @@ bool wasPressed(std::string pinName)
 
 bool isSquelchOpen()
 {
-    auto pin = gpioInPins.at("squelchOpen");
-    return gpio_get(pin);
+    return gpio_get(GPIO_SQUELCH_OPEN);
 }
 
 
@@ -43,20 +40,3 @@ int readRotaryEncoder(uint rotarySm)
     return updown;
 }
 
-int_fast8_t readUpDownButtons()
-{
-    if (wasPressed("micUp") && isPressed("micUp")) // read event and state to avoid crosstalk effects
-    {
-        Piezo::getInstance()->beepOK();
-        return 1;
-    }
-    else if (wasPressed("micDown") && isPressed("micDown"))
-    {
-        Piezo::getInstance()->beepOK();
-        return -1;
-    } 
-    else
-    {
-        return 0;
-    }
-}

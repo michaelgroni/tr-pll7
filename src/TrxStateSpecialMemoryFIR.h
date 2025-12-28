@@ -19,7 +19,7 @@ private:
     uint16_t* focus = &(config.fHigh);
     bool changed = true;
 public:
-    TrxStateSpecialMemoryFIR(const TrxState* oldState);
+    TrxStateSpecialMemoryFIR(I2Cinput& i2cInput, const TrxState* oldState);
     void update(const TrxState* oldState);
     void up(int n);
     void stepUp();

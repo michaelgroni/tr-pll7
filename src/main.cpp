@@ -1,4 +1,4 @@
-#include "pico/stdlib.h"
+﻿#include "pico/stdlib.h"
 #include "pico/multicore.h"
 #include "hardware/i2c.h"
 #include "hardware/pio.h"
@@ -22,50 +22,68 @@
 #include "setup.h"
 #include "ptt.pio.h"
 
+
+
+
+constexpr auto I2C_PORT_IO = i2c0;
+constexpr auto I2C_PORT_SI5351A = i2c1;
+constexpr uint8_t I2C_ADDR_SI5351A = 0x62; // 0x60, sometimes 0x62
+
 void setTxAllowed(const bool allowed, const uint pttSm);
 
 int main()
 {
-    setupI2C();
+
+    // __asm volatile("bkpt 0");
+    setupI2C(I2C_PORT_IO, I2C_PORT_SI5351A);
+    
     setupGPIOinput();
-    auto pttSm = setupPTTpio();
-    auto rotarySm = setupRotaryPio();
+    const auto pttSm = setupPTTpio();
+    const auto rotarySm = setupRotaryPio();
 
-    auto i2cInput = I2Cinput::getInstance();
+    static I2Cinput i2cInput(I2C_PORT_IO);
 
-    TrxStateVfo vfoA(VFO_A_INIT);
-    TrxStateVfo vfoB(VFO_B_INIT);
+    static TrxStateVfo vfoA(i2cInput, VFO_A_INIT);
+    static TrxStateVfo vfoB(i2cInput, VFO_B_INIT);
 
-    TrxStateMemories memories;
+    static TrxStateMemories memories(i2cInput);
 
-    Scanner scanner;
+    TrxStateScanMax trxStateScanMax(i2cInput);
+
+    static Scanner scanner;
 
     setTxAllowed(false, pttSm);
 
-    TrxState *currentState = I2Cinput::getInstance()->isPressedAB() ? &vfoB : &vfoA;
+    static TrxState *currentState = i2cInput.isPressedAB() ? &vfoB : &vfoA;
 
-    TrxStateSpecialMemoryFIR stateFir(currentState);
-
-    Piezo::getInstance()->beepOK();
+    static TrxStateSpecialMemoryFIR stateFir(i2cInput, currentState);
+    TrxStateScanMin trxStateScanMin(i2cInput);
 
     flashInit();
 
-    auto firConfig = stateFir.getConfig();
-    queue_init(&filterConfigQueue, sizeof(filterConfig), 2);
-    queue_add_blocking(&filterConfigQueue, &firConfig);
+    // static auto firConfig = stateFir.getConfig();
+    // queue_init(&filterConfigQueue, sizeof(filterConfig), 2);
+    // queue_add_blocking(&filterConfigQueue, &firConfig);
 
-    multicore_launch_core1(core1_entry);
+    Piezo::getInstance()->beepOK();
+
+    sleep_ms(100);
+    ADF4351 adf4351(i2cInput, I2C_PORT_SI5351A, I2C_ADDR_SI5351A);  
+    static Display display(I2C_PORT_IO);
+    
+    // multicore_launch_core1(core1_entry);
 
     // main loop
+    
     while (true)
     {
         sleep_ms(MAIN_LOOP_PAUSE_TIME);
 
         // read I²C input
-        i2cInput->update(); // must be called in the main loop
+        i2cInput.update(); // must be called in the main loop
 
         // select state instance
-        switch (I2Cinput::getInstance()->getSpecialMemoryChannel())
+        switch (i2cInput.getSpecialMemoryChannel())
         {
         case 1: // special memory scan min
             currentState = &trxStateScanMin;
@@ -77,39 +95,39 @@ int main()
             if (currentState != &stateFir)
             {
                 stateFir.update(currentState);
-                currentState = (TrxState *)&stateFir;
+                currentState = &stateFir;
             }
             break;
         default: // no special memory channel active
-            if (I2Cinput::getInstance()->isPressedMR())
+            if (i2cInput.isPressedMR())
             {
                 currentState = &memories;
             }
             else
             {
-                currentState = I2Cinput::getInstance()->isPressedAB() ? &vfoB : &vfoA;
+                currentState = i2cInput.isPressedAB() ? &vfoB : &vfoA;
             }
         }
 
         // read rotary encoder and up/down buttons
         int updown = readRotaryEncoder(rotarySm);
-        updown += readUpDownButtons();
+        // updown += readUpDownButtons(); // TODO implement up/down buttons on CONTROL IC1
 
         // read step buttons
-        if (I2Cinput::getInstance()->wasPressedStepIncrease())
+        if (i2cInput.wasPressedStepIncrease())
         {
             currentState->stepUp();
             Piezo::getInstance()->beepOK();
         }
-        if (I2Cinput::getInstance()->wasPressedStepDecrease())
+        if (i2cInput.wasPressedStepDecrease())
         {
             currentState->stepDown();
             Piezo::getInstance()->beepOK();
         }
 
-        auto mode = I2Cinput::getInstance()->getMode();
+        auto mode = i2cInput.getMode();
 
-        switch (I2Cinput::getInstance()->getSpecialMemoryChannel())
+        switch (i2cInput.getSpecialMemoryChannel())
         {
         case 1: // special memory scan min
             if (updown != 0)
@@ -117,7 +135,7 @@ int main()
                 currentState->up(updown);
             }
 
-            if (I2Cinput::getInstance()->wasPressedM())
+            if (i2cInput.wasPressedM())
             {
                 Piezo::getInstance()->beepOK();
                 trxStateScanMin.save();
@@ -129,14 +147,14 @@ int main()
                 currentState->up(updown);
             }
 
-            if (I2Cinput::getInstance()->wasPressedM())
+            if (i2cInput.wasPressedM())
             {
                 Piezo::getInstance()->beepOK();
                 trxStateScanMax.save();
             }
             break;
         case 3: // special memory filter
-            if (wasPressed("rotaryButton") && isPressed("rotaryButton"))
+            if (wasPressed(GPIO_ROTARY_BUTTON) && isPressed(GPIO_ROTARY_BUTTON))
             {
                 Piezo::getInstance()->beepError();
             }
@@ -144,16 +162,16 @@ int main()
             stateFir.up(updown);
             if (stateFir.wasChanged())
             {
-                firConfig = stateFir.getConfig();
+                // firConfig = stateFir.getConfig();
                 // queue_add_blocking(&filterConfigQueue, &firConfig);
             }
             break;
         default:                                        // no special memory channel active
-            if (I2Cinput::getInstance()->isPressedMR()) // memory read switch
+            if (i2cInput.isPressedMR()) // memory read switch
             {
                 if (!memories.isWriteModeOn()) // write mode is off
                 {
-                    if (I2Cinput::getInstance()->wasPressedM())
+                    if (i2cInput.wasPressedM())
                     {
                         Piezo::getInstance()->beepOK();
                         memories.setWriteModeOn(true);
@@ -161,18 +179,18 @@ int main()
                 }
                 else // write mode is on
                 {
-                    if (I2Cinput::getInstance()->wasPressedM())
+                    if (i2cInput.wasPressedM())
                     {
-                        TrxStateVfo *lastVfo = I2Cinput::getInstance()->isPressedAB() ? &vfoB : &vfoA;
+                        TrxStateVfo *lastVfo = i2cInput.isPressedAB() ? &vfoB : &vfoA;
                         saveMemory(memories.getMemoryIndex(), lastVfo->toMemory());
                         memories.setWriteModeOn(false);
                     }
-                    else if (I2Cinput::getInstance()->isPressedAB())
+                    else if (i2cInput.isPressedAB())
                     {
                         deleteMemory(memories.getMemoryIndex());
                         memories.setWriteModeOn(false);
                     }
-                    else if (I2Cinput::getInstance()->isPressedPtt() || wasPressed("rotaryButton") && isPressed("rotaryButton")) // leave write mode withut saving
+                    else if (i2cInput.isPressedPtt() || wasPressed(GPIO_ROTARY_BUTTON) && isPressed(GPIO_ROTARY_BUTTON)) // leave write mode withut saving
                     {
                         Piezo::getInstance()->beepError();
                         memories.setWriteModeOn(false);
@@ -183,15 +201,15 @@ int main()
             {
                 memories.setWriteModeOn(false);
 
-                if (I2Cinput::getInstance()->wasPressedM())
+                if (i2cInput.wasPressedM())
                 {
                     Piezo::getInstance()->beepError();
                 }
             }
 
-            if (wasPressed("rotaryButton") && isPressed("rotaryButton")) // scanner
+            if (wasPressed(GPIO_ROTARY_BUTTON) && isPressed(GPIO_ROTARY_BUTTON)) // scanner
             {
-                if (I2Cinput::getInstance()->isPressedPtt() || (mode == ctcss))
+                if (i2cInput.isPressedPtt() || (mode == ctcss))
                 {
                     Piezo::getInstance()->beepError();
                 }
@@ -208,7 +226,7 @@ int main()
             }
             else if (scanner.isOn())
             {
-                if (I2Cinput::getInstance()->isPressedPtt() || (mode == ctcss))
+                if (i2cInput.isPressedPtt() || (mode == ctcss))
                 {
                     scanner.setOn(false);
                     Piezo::getInstance()->beepOK();
@@ -225,7 +243,7 @@ int main()
                     scanner.update(currentState);
                 }
             }
-            else if (!I2Cinput::getInstance()->isPressedPtt())
+            else if (!i2cInput.isPressedPtt())
             {
                 setTxAllowed(false, pttSm);
                 if (updown != 0)
@@ -241,15 +259,15 @@ int main()
         }
 
         // update peripherals
-        Display::getInstance()->update(*currentState, scanner);
+        display.update(*currentState, scanner);
 
         if (currentState->getCurrentFrequency() != 0) // no unused memory channel
         {
-            ADF4351::getInstance()->write(currentState->getCurrentFrequency()); // pll
+            adf4351.write(currentState->getCurrentFrequency()); // pll
         }
 
-        // bool txAllowed = currentState->isTxAllowed() && !scanner.isOn();
-        bool txAllowed = true; // TODO fix this
+        // const bool txAllowed = currentState->isTxAllowed() && !scanner.isOn();
+        const bool txAllowed = true; // TODO fix this
         setTxAllowed(txAllowed, pttSm);
     }
 }

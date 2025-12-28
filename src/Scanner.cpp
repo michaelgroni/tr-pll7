@@ -25,7 +25,7 @@ void Scanner::update(TrxState *trxState)
         for (int i = 0; (i < 10) && isOn(); i++)
         {
             sleep_ms(SCANNER_WAIT_QSO_TIME / 10);
-            if (I2Cinput::getInstance()->isPressedPtt() || wasPressed("rotaryButton"))
+            if ((trxState->getI2Cinput()).isPressedPtt() || wasPressed(GPIO_ROTARY_BUTTON))
             {
                 Piezo::getInstance()->beepOK();
                 setOn(false);

@@ -5,7 +5,8 @@
 #include "GPIOinput.h"
 #include "GPIOoutput.h"
 
-TrxStateMemories::TrxStateMemories()
+TrxStateMemories::TrxStateMemories(I2Cinput& i2cInput)
+:TrxState(i2cInput)
 {
     // find a used memory channel
     memoryIndex = MEMORIES;
@@ -20,40 +21,42 @@ TrxStateMemories::TrxStateMemories()
 
 uint32_t TrxStateMemories::getRxFrequency() const
 {
-    if  (flashData[memoryIndex].isUsed)
-    {
-        if (!isPressed("reverse"))
-        {
-            return flashData[memoryIndex].rxFrequency;
-        }
-        else
-        {
-            return flashData[memoryIndex].txFrequency;
-        }
-    }
-    else
-    {
-        return 0;
-    }
+    return flashData[memoryIndex].rxFrequency;
+    // if  (flashData[memoryIndex].isUsed)
+    // {
+    //     if (!isPressed("reverse"))
+    //     {
+    //         return flashData[memoryIndex].rxFrequency;
+    //     }
+    //     else
+    //     {
+    //         return flashData[memoryIndex].txFrequency;
+    //     }
+    // }
+    // else
+    // {
+    //     return 0;
+    // }
 }
 
 uint32_t TrxStateMemories::getTxFrequency() const
 {
-    if  (flashData[memoryIndex].isUsed)
-    {
-        if (!isPressed("reverse"))
-        {
-            return flashData[memoryIndex].txFrequency;
-        }
-        else
-        {
-            return flashData[memoryIndex].rxFrequency;
-        }
-    }
-    else
-    {
-        return 0;
-    }
+    return flashData[memoryIndex].txFrequency;
+    // if  (flashData[memoryIndex].isUsed)
+    // {
+    //     if (!isPressed("reverse"))
+    //     {
+    //         return flashData[memoryIndex].txFrequency;
+    //     }
+    //     else
+    //     {
+    //         return flashData[memoryIndex].rxFrequency;
+    //     }
+    // }
+    // else
+    // {
+    //     return 0;
+    // }
 }
 
 void TrxStateMemories::up(int n)
@@ -121,5 +124,6 @@ void TrxStateMemories::setWriteModeOn(bool writeModeOn)
 
 bool TrxStateMemories::isTxAllowed() const
 {
-    return (!isWriteModeOn()) && TrxState::isTxAllowed();
+    return !isWriteModeOn(); // TODO fixme
+    // return (!isWriteModeOn()) && TrxState::isTxAllowed();
 }

@@ -8,11 +8,13 @@
 #include "TrxStateSpecialMemoryFIR.h"
 #include "pico-ssd1306/textRenderer/TextRenderer.h"
 #include "pico-ssd1306/shapeRenderer/ShapeRenderer.h"
+#include "settings.h"
 
 #include <iomanip>
 #include <sstream>
 
-Display::Display()
+Display::Display(i2c_inst* i2cPort)
+:oled(i2cPort, OLED_ADDRESS, pico_ssd1306::Size::W128xH32)
 {
     oled.setOrientation(OLED_FLIPPED);
     oled.setContrast(OLED_CONTRAST);
@@ -126,12 +128,6 @@ void Display::update(TrxState &trxState, const Scanner &scanner)
     setLine3(newLine3);
 
     oled.sendBuffer();
-}
-
-Display *Display::getInstance()
-{
-    static Display instance;
-    return &instance;
 }
 
 /*

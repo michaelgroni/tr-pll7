@@ -4,27 +4,38 @@
 #include "ptt.pio.h"
 #include "rotaryEncoder.pio.h"
 
-const uint8_t I2C_SDA = 0;
-const uint8_t I2C_SCL = 1;
+constexpr uint8_t I2C_IO_SDA = 0;
+constexpr uint8_t I2C_IO_SCL = 1;
 
-void setupI2C()
+constexpr uint8_t I2C_SI5351A_SDA = 2;
+constexpr uint8_t I2C_SI5351A_SCL = 3;
+
+constexpr uint I2C_IO_CLOCK = 100'000;
+constexpr uint I2C_SI5351A_CLOCK = 400'000;
+
+
+void setupI2C(i2c_inst_t* i2cIO, i2c_inst_t* i2cSi5351A)
 {
-    i2c_init(I2C_PORT, I2C_CLOCK);
-    gpio_set_function(I2C_SDA, GPIO_FUNC_I2C);
-    gpio_set_function(I2C_SCL, GPIO_FUNC_I2C);
-    gpio_set_slew_rate(I2C_SDA, GPIO_SLEW_RATE_SLOW);
-    gpio_set_slew_rate(I2C_SCL, GPIO_SLEW_RATE_SLOW);
-    gpio_pull_up(I2C_SDA);
-    gpio_pull_up(I2C_SCL);
+    i2c_init(i2cIO, I2C_IO_CLOCK);
+    gpio_set_function(I2C_IO_SDA, GPIO_FUNC_I2C);
+    gpio_set_function(I2C_IO_SCL, GPIO_FUNC_I2C);
+    gpio_pull_up(I2C_IO_SDA);
+    gpio_pull_up(I2C_IO_SCL);
+ 
+    i2c_init(i2cSi5351A, I2C_SI5351A_CLOCK);
+    gpio_set_function(I2C_SI5351A_SDA, GPIO_FUNC_I2C);
+    gpio_set_function(I2C_SI5351A_SCL, GPIO_FUNC_I2C);
+    gpio_pull_up(I2C_SI5351A_SDA);
+    gpio_pull_up(I2C_SI5351A_SCL);   
 }
 
 void setupGPIOinput()
 {
-    for (auto [name, pin] : gpioInPins)
-    {
-        gpio_init(pin);
-        gpio_pull_up(pin);
-    }
+        gpio_init(GPIO_ROTARY_BUTTON);
+        gpio_pull_up(GPIO_ROTARY_BUTTON);
+
+        gpio_init(GPIO_SQUELCH_OPEN);
+        gpio_pull_up(GPIO_SQUELCH_OPEN);        
 }
 
 uint setupPTTpio()

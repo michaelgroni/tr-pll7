@@ -57,15 +57,20 @@ array<uint8_t, 9> Si5351::registerContent(const uint8_t address, const uint a, c
 
 void Si5351::setChrystalLoadCapacitance(uint8_t cLoad)
 {
-    array<uint8_t, 2> data {183, 0xD2}; // default value 10 pF
+    array<uint8_t, 2> data {183, 0x12}; // reserved bits set according to datasheet
 
-    if (cLoad == 6) // 6 pF
+    switch (cLoad)
     {
-        data.at(1) &= 0x7F;
-    }
-    else if (cLoad == 8) // 8 pF
-    {
-        data.at(1) &= 0xBF;
+        case 6:
+            data.at(1) |= 0x40;
+            break;
+        case 8:
+            data.at(1) |= 0x80;
+            break;
+        case 10:
+        default:
+            data.at(1) |= 0xC0;
+            break;
     }
 
     i2c_write_blocking(I2C_PORT, I2C_ADDR, data.data(), data.size(), false);    
@@ -99,7 +104,7 @@ Si5351::Si5351(i2c_inst *i2cPort, uint8_t i2cAddr, const uint8_t cLoad)
 
 void Si5351::disableInterrupts()
 {
-    array<uint8_t, 2> data {2, 0xF0};
+    array<uint8_t, 2> data {2, 0xF8};
     i2c_write_blocking(I2C_PORT, I2C_ADDR, data.data(), data.size(), false);
 }
 
@@ -111,26 +116,37 @@ void Si5351::disableOEBPin()
 
 void Si5351::resetPll(const char pll) const
 {
-    array<uint8_t, 2> data {177, 0};
+    uint8_t mask;
 
     switch (pll)
     {
         case 'a':
-            data.at(1) = 0x20;
+            mask = 0x20; // bit 5
             break;
         case 'b':
-            data.at(1) = 0x80;
+            mask = 0x80; // bit 7
             break;
         default:
             return;
     }
 
+    constexpr uint8_t ADDRESS = 177;
+
+    auto registerContent = readByte(ADDRESS);
+    registerContent |= mask; // set bit 5 or 7
+
+    array<uint8_t, 2> data {ADDRESS, registerContent};
     i2c_write_blocking(I2C_PORT, I2C_ADDR, data.data(), data.size(), false);
 }
 
 void Si5351::resetPll() const
 {
-    array<uint8_t, 2> data {177, 0xA0};
+    constexpr uint8_t ADDRESS = 177;
+
+    auto registerContent = readByte(ADDRESS);
+    registerContent |= 0xA0; // set bits 5 and 7
+
+    array<uint8_t, 2> data {ADDRESS, registerContent};
     i2c_write_blocking(I2C_PORT, I2C_ADDR, data.data(), data.size(), false);
 }
 
@@ -178,10 +194,11 @@ void Si5351::setMultisynth0to5parameters(const uint8_t multisynth, const uint32_
     auto data = registerContent(address, integer, num, denom);
 
     outDiv &= 0x07; // ignore bits left of 2^2
-    outDiv << 4;    // shift to the correct position
-    data.at(2) |= outDiv;
+    outDiv = outDiv << 4;    // shift to the correct position
+    data.at(3) |= outDiv;
+    data.at(3) &= 0xF3;     // divide by a value other than 4
 
-    i2c_write_blocking(I2C_PORT, I2C_ADDR, data.data(), sizeof(data), false);
+    i2c_write_blocking(I2C_PORT, I2C_ADDR, data.data(), data.size(), false);
 }
 
 void Si5351::setOutputDisableState(uint8_t clkIndex, const uint8_t disState)
@@ -190,11 +207,11 @@ void Si5351::setOutputDisableState(uint8_t clkIndex, const uint8_t disState)
 
     if (clkIndex > 7) clkIndex = 0;
 
-    uint16_t deleteMask = ~(0x03 << clkIndex); // for example 0xF3 to clear the state of CLK1
+    uint16_t deleteMask = ~(0x03 << (2*clkIndex)); // for example 0xF3 to clear the state of CLK1
     uint8_t deleteLow = (uint8_t) deleteMask;
     uint8_t deleteHigh = (uint8_t) (deleteMask >> 8);
 
-    uint16_t dataMask = (disState && 0x03) << clkIndex;
+    uint16_t dataMask = (disState & 0x03) << (2*clkIndex);
     uint8_t dataLow = (uint8_t) dataMask;
     uint8_t dataHigh = (uint8_t) (dataMask >> 8);
 
@@ -222,7 +239,7 @@ void Si5351::setOutput(const uint8_t clkIndex, const bool enabled)
 
     if (enabled) // enable
     {
-        data.at(1) &= !mask;
+        data.at(1) &= ~mask;
     }
     else //disable
     {
@@ -240,9 +257,10 @@ void Si5351::setOutputsOff()
     i2c_write_blocking(I2C_PORT, I2C_ADDR, data.data(), data.size(), false);
 
     // power down
-    data.at(1) = 0x80;
     for (data.at(0) = 16; data.at(0) <= 23; (data.at(0))++)
     {
+        const auto registerContent = readByte(data.at(0));
+        data.at(1) = registerContent | 0x80;
         i2c_write_blocking(I2C_PORT, I2C_ADDR, data.data(), data.size(), false);
     }
 }
@@ -287,5 +305,37 @@ void Si5351::setPllParameters(const char pll, const uint32_t integer, const uint
     }
 
     const auto data = registerContent(address, integer, numerator, denominator);
-    i2c_write_blocking(I2C_PORT, I2C_ADDR, data.data(), sizeof(data), false);
+    i2c_write_blocking(I2C_PORT, I2C_ADDR, data.data(), data.size(), false);
+}
+
+void Si5351::setPllIntMode(const char pll, const bool intModeOn)
+{
+    uint8_t address; // register to be written
+    const uint8_t mask = 0x40; // bit 6
+
+    switch (pll)
+    {
+        case 'a':
+            address = 22; // PLL A
+            break;
+        case 'b':
+            address = 23; // PLL B
+            break;
+        default:
+            return;
+    }
+
+    auto registerContent = readByte(address);
+
+    if (intModeOn)
+    {
+        registerContent |= mask; // set bit 6
+    }
+    else
+    {
+        registerContent &= ~mask; // clear bit 6
+    }
+
+    array<uint8_t, 2> data {address, registerContent};
+    i2c_write_blocking(I2C_PORT, I2C_ADDR, data.data(), data.size(), false);
 }

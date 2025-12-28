@@ -8,7 +8,7 @@
 class TrxStateVfo : public TrxState
 {
 public:
-    TrxStateVfo(uint32_t rxFrequency);
+    TrxStateVfo(I2Cinput& i2cInput, uint32_t rxFrequency);
     uint32_t getRxFrequency() const;
     void setRxFrequency(uint32_t frequency);
     uint32_t getTxFrequency() const;

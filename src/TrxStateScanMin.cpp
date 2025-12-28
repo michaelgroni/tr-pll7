@@ -3,6 +3,10 @@
 #include "settings.h"
 #include "memory.h"
 
+TrxStateScanMin::TrxStateScanMin(I2Cinput& i2cInput)
+:TrxStateSpecialMemory(i2cInput)
+{}
+
 uint32_t TrxStateScanMin::getRxFrequency() const
 {
     return scanMin() + offset;
