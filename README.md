@@ -10,6 +10,7 @@ No major hardware changes are expected. The firmware is running, but is not yet 
 Cheap boards with the PLL module ADF4351 are available on the market. Unfortunately, it is difficult to generate a clean signal with a 10 Hz step width at 456 MHz. For this reason, the PLL operates with a step of 1 MHz. A Si5351A clock generator on the CONTOL UNIT generates a reference frequency of around 10 MHz, which is changed in very small steps. This creates a 10 Hz raster at the end frequency.
 
 ### Proposal for the loop filter
+This filter was originally designed for a reference frequency of 100 kHz. It appears to function satisfactorily at 1 MHz.
 <img src="loopFilter.png" alt="loop filter: C1 = 220 pF; C2 = 6.8 nF; C3 = 33 pF; R1 = 11 kOhm; R2 = 68 kOhm; Rset = 5.1 kOhm"> 
 
 ### ADF4351 boards
