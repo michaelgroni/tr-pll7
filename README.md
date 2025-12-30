@@ -1,9 +1,13 @@
 # tr-pll70
-**This project is in beta state.**
 <img src="overview.svg" alt="block diagramm">
 
+## Current status
+No major hardware changes are expected. The firmware is running, but is not yet complete.
+
+**This is purely a hobby project. I cannot guarantee that it is error-free or that the modification will be successful.**
+
 ## PLL
-Cheap boards with the PLL module ADF4351 are available on the market. Unfortunately, it is difficult to generate a clean signal with a 10 Hz step width at 460 MHz. For this reason, the PLL operates with a step of 100 kHz. A Si5351A clock generator on the CONTOL UNIT generates a reference frequency of around 10 MHz, which is changed in very small steps. This creates a 10 Hz raster at the end frequency.
+Cheap boards with the PLL module ADF4351 are available on the market. Unfortunately, it is difficult to generate a clean signal with a 10 Hz step width at 456 MHz. For this reason, the PLL operates with a step of 1 MHz. A Si5351A clock generator on the CONTOL UNIT generates a reference frequency of around 10 MHz, which is changed in very small steps. This creates a 10 Hz raster at the end frequency.
 
 ### Proposal for the loop filter
 <img src="loopFilter.png" alt="loop filter: C1 = 220 pF; C2 = 6.8 nF; C3 = 33 pF; R1 = 11 kOhm; R2 = 68 kOhm; Rset = 5.1 kOhm"> 
