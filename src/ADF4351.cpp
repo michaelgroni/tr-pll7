@@ -15,20 +15,21 @@ constexpr uint8_t PLL_SPI_TX = 7;  // MOSI
 constexpr uint8_t PLL_OUT_LE = 4;
 
 // SI5351 and ADF4351
-constexpr uint32_t F_XO_SI {25'000'000};      // 25 MHz or 27 MHz
+constexpr uint32_t F_XO_SI{25'000'000}; // 25 MHz or 27 MHz
 // constexpr uint8_t M_MULTISYNTH_MIN{60}; // must be even
 // constexpr uint8_t M_MULTISYNTH_MAX{90}; // should be even
-constexpr uint32_t PFD_ADF {1'000'000};   // 100 kHz
-constexpr uint8_t R_ADF {10};
+constexpr uint32_t PFD_ADF{1'000'000}; // 100 kHz
+constexpr uint8_t R_ADF{10};
 using namespace std;
 
 void ADF4351::write(const uint32_t frequency)
 {
     const auto fPll = pllFrequency(frequency); // + 1st IF + mode dependent offset
 
-    if (fPll != oldPllFrequency)
+    if ((fPll != this->frequency) || (i2cInput.isPressedPtt() != isPttPressed))
     {
-        oldPllFrequency = fPll;
+        this->frequency = fPll;
+        isPttPressed = i2cInput.isPressedPtt();
 
         // Si5351 PLL_A
         ImproperFractionSi5351 nPLL(F_XO_SI, R_ADF, PFD_ADF, fPll);
@@ -48,9 +49,16 @@ void ADF4351::write(const uint32_t frequency)
         writePLL(r5);
 
         // write R4
-        uint8_t r4[] = {0x00, 0x30, 0xA4, 0x24};
-        writePLL(r4);
-
+        if (!isPttPressed) // more power from the PLL in RX mode
+        {
+            uint8_t r4[] = {0x00, 0x30, 0xA4, 0x3C};
+            writePLL(r4);            
+        }
+        else
+        {
+            uint8_t r4[] = {0x00, 0x30, 0xA4, 0x24};
+            writePLL(r4);
+        }
         // write R3
         uint8_t r3[] = {0x00, 0x40, 0x00, 0x13};
         writePLL(r3);
