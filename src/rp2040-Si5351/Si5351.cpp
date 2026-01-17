@@ -37,16 +37,20 @@ uint8_t Si5351::readByte(uint8_t reg) const
 
 array<uint8_t, 9> Si5351::registerContent(const uint8_t address, const std::array<uint32_t, 3> &p) const
 {
+    const auto P1 = p.at(0);
+    const auto P2 = p.at(1);    
+    const auto P3 = p.at(2);
+
     array<uint8_t, 9> data;
     data.at(0) = address;
-    data[1] = (p.at(2) >> 8) & 0xFF;                                // for example register 26                    
-    data[2] = p.at(2) & 0xFF;                                       // 27                         
-    data[3] = (p.at(0) >> 16) & 0x03;                               // 28
-    data[4] = (p.at(0) >> 8) & 0xFF;                                // 29                   
-    data[5] = p.at(0) & 0xFF;                                       // 30
-    data[6] = ((p.at(2) >> 12) & 0xF0) + ((p.at(1) >> 16) & 0x0F);  // 31
-    data[7] = (p.at(1) >> 8) & 0xFF;                                // 32                            
-    data[8] = p.at(1) & 0xFF;                                       // 33                         
+    data[1] = (P3 >> 8) & 0xFF;                                // for example register 26                    
+    data[2] = P3 & 0xFF;                                       //                      27                         
+    data[3] = (P1 >> 16) & 0x03;                               //                      28
+    data[4] = (P1 >> 8) & 0xFF;                                //                      29                   
+    data[5] = P1 & 0xFF;                                       //                      30
+    data[6] = ((P3 >> 12) & 0xF0) + ((P2 >> 16) & 0x0F);       //                      31
+    data[7] = (P2 >> 8) & 0xFF;                                //                      32                            
+    data[8] = P2 & 0xFF;                                       //                      33                         
     return data;
 }
 
