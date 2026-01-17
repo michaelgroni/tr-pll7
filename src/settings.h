@@ -52,8 +52,8 @@ inline const auto PTT_PIO = pio1; // origin 0
 inline const auto R2R_PIO = pio1;
 
 // PTT pio pins
-inline const uint PTT_OUT_PIN = 9;
-inline const uint PTT_IN_PIN = 8;
+inline constexpr uint PTT_OUT_PIN = 9;
+inline constexpr uint PTT_IN_PIN = 8;
 
 // GPIO input pins
 constexpr uint8_t GPIO_ROTARY_BUTTON = 22;

@@ -7,15 +7,16 @@ ImproperFractionSi5351::ImproperFractionSi5351(const uint32_t fXO, const uint8_t
 {
     const uint32_t offsetADF = fEnd % pfdADF;
     const uint32_t fADF = fEnd - offsetADF;
-    
+
     nADF = fADF / pfdADF;
 
     bool finished = false;
     double bestError = __DBL_MAX__;
-    for (uint8_t mCandidate = 60; (mCandidate <= 90) && !finished; mCandidate += 2)
+
+    for (int32_t k = K_MAX; (k >= K_MIN) && !finished; k--)
+    // for (int32_t k = K_MIN; (k <= K_MAX) && !finished; k++)
     {
-        for (int32_t k = K_MAX; (k >= K_MIN) && !finished; k--)
-        // for (int32_t k=K_MIN; (k <= K_MAX) && !finished; k++)
+        for (uint8_t mCandidate = 60; (mCandidate <= 90) && !finished; mCandidate += 2)
         {
             const uint32_t cCandidate = k * STEP;
 
@@ -24,11 +25,11 @@ ImproperFractionSi5351::ImproperFractionSi5351(const uint32_t fXO, const uint8_t
             const uint64_t den = (uint64_t)fXO * nADF;
             const uint32_t aCandidate = num / den;
             const uint64_t rem = num % den;
-            const uint32_t bCandidate0 = (uint32_t)((rem * cCandidate) / den);                       // floored
+            const uint32_t bCandidate0 = static_cast<uint32_t>((rem * cCandidate) / den);                       // floored
             const uint32_t bCandidate1 = (bCandidate0 < cCandidate) ? bCandidate0 + 1 : bCandidate0; // try next higher b, if possible
 
-            const double fCandidate0 = (fXO * ((double)aCandidate + (double)bCandidate0 / cCandidate)) * (nADF / ((double)rADF * mCandidate));
-            const double fCandidate1 = (fXO * ((double)aCandidate + (double)bCandidate1 / cCandidate)) * (nADF / ((double)rADF * mCandidate));
+            const double fCandidate0 = (fXO * (aCandidate + (double)bCandidate0 / cCandidate)) * (nADF / ((double)rADF * mCandidate));
+            const double fCandidate1 = (fXO * (aCandidate + (double)bCandidate1 / cCandidate)) * (nADF / ((double)rADF * mCandidate));
             const double error0 = std::abs(static_cast<double>(fEnd) - fCandidate0);
             const double error1 = std::abs(static_cast<double>(fEnd) - fCandidate1);
 

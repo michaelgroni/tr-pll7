@@ -23,15 +23,14 @@ void setup_adc(const unsigned int f_sample)
 static FirLowpass bandpass(2700, F_SAMPLE); // TODO fix globals
 static FirNotch notch = FirNotch(1000, F_SAMPLE);
 
-// static int r2rSm;
 static int stateMachineR2R;
 
 bool timerHandler(struct repeating_timer* t)
 {
-	static uint16_t sample;
+	int16_t sample;
 	sample = adc_read();
 	// bandpass.filter(sample);
-	pio_sm_put(R2R_PIO, stateMachineR2R, (uint32_t) sample >> 4);
+	pio_sm_put(R2R_PIO, stateMachineR2R, static_cast<uint32_t>(sample));
 	return true;
 }
 
@@ -52,9 +51,7 @@ void core1_entry()
 	pio_sm_set_consecutive_pindirs(R2R_PIO, stateMachineR2R, R2R_BASE_PIN, R2R_SIZE, true);
 	pio_sm_set_enabled(R2R_PIO, stateMachineR2R, true);
 	
-
 	setup_adc(F_SAMPLE);
-
 
 	static filterConfig fc;
 	queue_remove_blocking(&filterConfigQueue, &fc);
@@ -65,7 +62,7 @@ void core1_entry()
 
 	repeating_timer_t timer;
 	auto pool = alarm_pool_create_with_unused_hardware_alarm(2);
-	alarm_pool_add_repeating_timer_us (pool, 1000000/F_SAMPLE, timerHandler, nullptr, &timer);
+	alarm_pool_add_repeating_timer_us(pool, 1000000/F_SAMPLE, timerHandler, nullptr, &timer);
 
 	while (true)
 	{

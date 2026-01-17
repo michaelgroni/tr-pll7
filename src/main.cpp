@@ -162,8 +162,8 @@ int main()
             stateFir.up(updown);
             if (stateFir.wasChanged())
             {
-                // firConfig = stateFir.getConfig();
-                // queue_add_blocking(&filterConfigQueue, &firConfig);
+                firConfig = stateFir.getConfig();
+                queue_add_blocking(&filterConfigQueue, &firConfig);
             }
             break;
         default:                                        // no special memory channel active

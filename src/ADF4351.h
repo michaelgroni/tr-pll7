@@ -15,7 +15,8 @@ public:
     void write(const uint32_t frequency);
 
 private:
-    uint32_t oldPllFrequency {0};
+    uint32_t frequency {0};
+    bool isPttPressed {false};
 
     I2Cinput& i2cInput;
 
