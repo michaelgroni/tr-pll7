@@ -68,7 +68,7 @@ void ADF4351::write(const uint32_t frequency)
         writePLL(r2);
 
         // write R1
-        uint8_t r1[] = {0x08, 0x00, 0x80, 0x11};
+        uint8_t r1[] = {0x00, 0x00, 0x80, 0x11};
         writePLL(r1);
 
         // write R0
