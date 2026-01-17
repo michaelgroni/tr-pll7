@@ -57,7 +57,7 @@ void core1_entry()
 	queue_remove_blocking(&filterConfigQueue, &fc);
 
 	// bandpass = FirBandpass(fc.fLow, fc.fHigh, F_SAMPLE);
-	// notch = FirNotch(1000, F_SAMPLE);
+	notch = FirNotch(1000, F_SAMPLE);
 	static Median median = Median(fc.medianSize);
 
 	repeating_timer_t timer;

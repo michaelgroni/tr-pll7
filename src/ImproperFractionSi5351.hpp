@@ -31,10 +31,10 @@ private:
     double error;
 
     static constexpr uint16_t STEP {1};
-    static constexpr uint32_t MAX_DENOMINATOR { (1UL << 20) - 1};
-    // static constexpr uint32_t MAX_DENOMINATOR { 10000 };
-    static constexpr uint32_t K_MAX = MAX_DENOMINATOR / STEP;
-    static constexpr uint32_t K_MIN = (K_MAX / 2) -1;
+    static constexpr uint32_t MAX_DENOMINATOR {(1UL << 20) - 1};
+    // static constexpr uint32_t MAX_DENOMINATOR { 256 };
+    static constexpr uint32_t K_MAX {MAX_DENOMINATOR / STEP};
+    static constexpr uint32_t K_MIN {(K_MAX / 2) -1};
     
 public:
     ImproperFractionSi5351(const uint32_t fXO, const uint8_t rADF, const uint32_t pfdADF, const uint32_t fEnd);

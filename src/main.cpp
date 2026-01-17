@@ -41,27 +41,27 @@ int main()
     const auto pttSm = setupPTTpio();
     const auto rotarySm = setupRotaryPio();
 
-    static I2Cinput i2cInput(I2C_PORT_IO);
+    I2Cinput i2cInput(I2C_PORT_IO);
 
-    static TrxStateVfo vfoA(i2cInput, VFO_A_INIT);
-    static TrxStateVfo vfoB(i2cInput, VFO_B_INIT);
+    TrxStateVfo vfoA(i2cInput, VFO_A_INIT);
+    TrxStateVfo vfoB(i2cInput, VFO_B_INIT);
 
-    static TrxStateMemories memories(i2cInput);
+    TrxStateMemories memories(i2cInput);
 
     TrxStateScanMax trxStateScanMax(i2cInput);
 
-    static Scanner scanner;
+    Scanner scanner;
 
     setTxAllowed(false, pttSm);
 
-    static TrxState *currentState = i2cInput.isPressedAB() ? &vfoB : &vfoA;
+    TrxState *currentState = i2cInput.isPressedAB() ? &vfoB : &vfoA;
 
-    static TrxStateSpecialMemoryFIR stateFir(i2cInput, currentState);
+    TrxStateSpecialMemoryFIR stateFir(i2cInput, currentState);
     TrxStateScanMin trxStateScanMin(i2cInput);
 
     flashInit();
 
-    static auto firConfig = stateFir.getConfig();
+    auto firConfig = stateFir.getConfig();
     queue_init(&filterConfigQueue, sizeof(filterConfig), 2);
     queue_add_blocking(&filterConfigQueue, &firConfig);
 
