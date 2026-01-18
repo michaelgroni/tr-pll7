@@ -18,7 +18,7 @@ constexpr uint8_t PLL_OUT_LE = 4;
 constexpr uint32_t F_XO_SI{25'000'000}; // 25 MHz or 27 MHz
 // constexpr uint8_t M_MULTISYNTH_MIN{60}; // must be even
 // constexpr uint8_t M_MULTISYNTH_MAX{90}; // should be even
-constexpr uint32_t PFD_ADF{10'000'000}; 
+constexpr uint32_t PFD_ADF{10'000'000};
 constexpr uint8_t R_ADF{1};
 using namespace std;
 
@@ -44,33 +44,6 @@ void ADF4351::write(const uint32_t frequency)
 
         sleep_ms(1); // wait for Si5351 to be ready
 
-        // write R5
-        uint8_t r5[] = {0x00, 0x58, 0x00, 0x05};
-        writePLL(r5);
-
-        // write R4
-        if (!isPttPressed) // more power from the PLL in RX mode
-        {
-            uint8_t r4[] = {0x00, 0x36, 0x44, 0x3C};
-            writePLL(r4);            
-        }
-        else
-        {
-            uint8_t r4[] = {0x00, 0x36, 0x44, 0x24};
-            writePLL(r4);
-        }
-        // write R3
-        uint8_t r3[] = {0x00, 0x40, 0x00, 0x13};
-        writePLL(r3);
-
-        // write R2
-        uint8_t r2[] = {0x18, 0x00, 0x41, 0xC2};
-        writePLL(r2);
-
-        // write R1
-        uint8_t r1[] = {0x00, 0x00, 0x80, 0x11};
-        writePLL(r1);
-
         // write R0
         uint32_t r0value = static_cast<uint32_t>(nADF) << 15;
         uint8_t r0[4];
@@ -95,6 +68,33 @@ ADF4351::ADF4351(I2Cinput &i2cInput, i2c_inst_t *i2cSi5351, const uint8_t i2cAdd
     gpio_init(PLL_OUT_LE);
     gpio_set_dir(PLL_OUT_LE, true);
     gpio_put(PLL_OUT_LE, 1);
+
+    // write R5
+    uint8_t r5[] = {0x00, 0x58, 0x00, 0x05};
+    writePLL(r5);
+
+    // write R4
+    if (!isPttPressed) // more power from the PLL in RX mode
+    {
+        uint8_t r4[] = {0x00, 0x36, 0x44, 0x3C};
+        writePLL(r4);
+    }
+    else
+    {
+        uint8_t r4[] = {0x00, 0x36, 0x44, 0x24};
+        writePLL(r4);
+    }
+    // write R3
+    uint8_t r3[] = {0x00, 0x40, 0x00, 0x13};
+    writePLL(r3);
+
+    // write R2
+    uint8_t r2[] = {0x18, 0x00, 0x45, 0xC2};
+    writePLL(r2);
+
+    // write R1
+    uint8_t r1[] = {0x00, 0x00, 0x80, 0x11};
+    writePLL(r1);
 
     setupSi5351();
 }
