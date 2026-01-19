@@ -48,7 +48,7 @@ Connect the TX OFFSET switch to K2 on the CONTROL UNIT.
 17. Remove the HET UNIT. The white wire 8C (connector 5 pin 8) is useful for the power supply of the PLL. Apart from this one wire, plugs 5 and 6 can be completely removed.
 18. Attach the PLL board and the low-pass board in the housing of the HET UNIT. Connect the data lines and the reference input of the PLL to the CONTROL UNIT. The 8C line with 8 volts or the 5-volt line from the CONTROL UNIT serves as the power supply. The LD signal (lock detect) can be taken from the pin LD or MUX OUT.
 19. The output signal of the PLL is fed to the LT and RT coax cables via the low-pass filter.
-20. Depending on the output power of your PLL board, it is likely that you have to give the resistor R1 (27 Ohm) on the DRIVE UNIT, which converts part of the power into heat, a higher value. In this case you also have to change C1 (470 pF) in order to create an adjustment to 50 Ohm. If you remove R1 completely, C1 should have 10 pF.
+20. Depending on the output power of your PLL board, it is likely that you have to give the resistor R1 (27 Ohm) on the DRIVE UNIT, which converts part of the power into heat, a higher value. In this case you also have to change C1 (470 pF) in order to create an adjustment to 50 Ohm.
     |               | R1     | C1     |
     |---------------|--------|--------|
     | original      | 27 Ohm | 470 pF |
