@@ -44,6 +44,18 @@ void ADF4351::write(const uint32_t frequency)
 
         sleep_ms(1); // wait for Si5351 to be ready
 
+        // write R4
+        if (!isPttPressed) // more power from the PLL in RX mode
+        {
+            uint8_t r4[] = {0x00, 0x36, 0x44, 0x3C};
+            writePLL(r4);
+        }
+        else
+        {
+            uint8_t r4[] = {0x00, 0x36, 0x44, 0x34};
+            writePLL(r4);
+        }
+
         // write R0
         uint32_t r0value = static_cast<uint32_t>(nADF) << 15;
         uint8_t r0[4];
@@ -73,27 +85,16 @@ ADF4351::ADF4351(I2Cinput &i2cInput, i2c_inst_t *i2cSi5351, const uint8_t i2cAdd
     uint8_t r5[] = {0x00, 0x58, 0x00, 0x05};
     writePLL(r5);
 
-    // write R4
-    if (!isPttPressed) // more power from the PLL in RX mode
-    {
-        uint8_t r4[] = {0x00, 0x36, 0x44, 0x3C};
-        writePLL(r4);
-    }
-    else
-    {
-        uint8_t r4[] = {0x00, 0x36, 0x44, 0x24};
-        writePLL(r4);
-    }
     // write R3
     uint8_t r3[] = {0x00, 0x40, 0x00, 0x13};
     writePLL(r3);
 
     // write R2
-    uint8_t r2[] = {0x18, 0x00, 0x45, 0xC2};
+    uint8_t r2[] = {0x18, 0x00, 0x5F, 0xC2};
     writePLL(r2);
 
     // write R1
-    uint8_t r1[] = {0x00, 0x00, 0x80, 0x11};
+    uint8_t r1[] = {0x00, 0x00, 0x83, 0x21};
     writePLL(r1);
 
     setupSi5351();
