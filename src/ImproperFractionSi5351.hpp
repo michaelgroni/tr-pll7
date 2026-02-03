@@ -4,20 +4,6 @@
 #include <string>
 
 /*
-template <typename T>
-T gcd(T x, T y)
-{
-    if (x == 0)
-        return y;
-    if (y == 0)
-        return x;
-    if (x < y)
-        return gcd(y, x);
-    return gcd(y, x % y);
-}
-*/
-
-/*
  * a + b/c
  */
 class ImproperFractionSi5351
@@ -28,7 +14,7 @@ private:
     uint32_t c;
     uint8_t m;
     uint16_t nADF;
-    double error;
+    float error;
 
     static constexpr uint16_t STEP {1};
     static constexpr uint32_t MAX_DENOMINATOR {(1UL << 20) - 1};
@@ -46,7 +32,7 @@ public:
     uint16_t getNADF() const;
 
     double getEpsilon() const;
-    double getError() const;
+    float getError() const;
 
     std::string toString();
 };

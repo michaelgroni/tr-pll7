@@ -11,7 +11,7 @@ ImproperFractionSi5351::ImproperFractionSi5351(const uint32_t fXO, const uint8_t
     nADF = fADF / pfdADF;
 
     bool finished = false;
-    double bestError = __DBL_MAX__;
+    float bestError = __FLT_MAX__;
 
     for (int32_t k = K_MAX; (k >= K_MIN) && !finished; k--)
     // for (int32_t k = K_MIN; (k <= K_MAX) && !finished; k++)
@@ -30,10 +30,10 @@ ImproperFractionSi5351::ImproperFractionSi5351(const uint32_t fXO, const uint8_t
 
             const double fCandidate0 = (fXO * (aCandidate + (double)bCandidate0 / cCandidate)) * (nADF / ((double)rADF * mCandidate));
             const double fCandidate1 = (fXO * (aCandidate + (double)bCandidate1 / cCandidate)) * (nADF / ((double)rADF * mCandidate));
-            const double error0 = std::abs(static_cast<double>(fEnd) - fCandidate0);
-            const double error1 = std::abs(static_cast<double>(fEnd) - fCandidate1);
+            const float error0 = std::abs(static_cast<float>(fEnd) - fCandidate0);
+            const float error1 = std::abs(static_cast<float>(fEnd) - fCandidate1);
 
-            const double errorCandidate = std::min(error0, error1);
+            const float errorCandidate = std::min(error0, error1);
 
             if (errorCandidate < bestError)
             {
@@ -84,7 +84,7 @@ double ImproperFractionSi5351::getEpsilon() const
     return std::min(frac, 1.0 - frac);
 }
 
-double ImproperFractionSi5351::getError() const
+float ImproperFractionSi5351::getError() const
 {
     return error;
 }

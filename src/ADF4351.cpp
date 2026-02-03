@@ -8,6 +8,8 @@
 
 #include "hardware/spi.h"
 
+#include <array>
+
 // SPI PLL
 const auto SPI_PORT = spi0;
 constexpr uint8_t PLL_SPI_SCK = 6; // SCLK
@@ -46,31 +48,32 @@ void ADF4351::write(const uint32_t frequency)
 
         sleep_ms(1); // wait for Si5351 to be ready
 
+        array<uint8_t, 4> r; // ADF451 register
+        
         // write R4
         if (!isPttPressed) // more power from the PLL in RX mode
         {
-            uint8_t r4[] = {0x00, 0x36, 0x44, 0x3C};
-            writePLL(r4);
+            r = {0x00, 0x36, 0x44, 0x3C};
+            writePLL(r.data());
         }
         else
         {
-            uint8_t r4[] = {0x00, 0x36, 0x44, 0x2C};
-            writePLL(r4);
+            r = {0x00, 0x36, 0x44, 0x2C};
+            writePLL(r.data());
         }
 
         // write R1
-        uint8_t r1[] = {0x00, 0x00, 0x83, 0x21};
-        writePLL(r1);
+        r = {0x00, 0x00, 0x83, 0x21};
+        writePLL(r.data());
 
         // write R0
         uint32_t r0value = static_cast<uint32_t>(nADF) << 15;
-        uint8_t r0[4];
         uint8_t *fake8bit = (uint8_t *)&r0value;
         for (size_t i = 0; i < 4; i++)
         {
-            r0[3 - i] = *(fake8bit + i);
+            r[3 - i] = *(fake8bit + i);
         }
-        writePLL(r0);
+        writePLL(r.data());
     }
 }
 
@@ -87,17 +90,19 @@ ADF4351::ADF4351(I2Cinput &i2cInput, i2c_inst_t *i2cSi5351, const uint8_t i2cAdd
     gpio_set_dir(PLL_OUT_LE, true);
     gpio_put(PLL_OUT_LE, 1);
 
+    array<uint8_t, 4> r; // ADF451 register
+    
     // write R5
-    uint8_t r5[] = {0x00, 0x58, 0x00, 0x05};
-    writePLL(r5);
-
+    r = {0x00, 0x58, 0x00, 0x05};
+    writePLL(r.data());
+    
     // write R3
-    uint8_t r3[] = {0x00, 0x40, 0x00, 0x13};
-    writePLL(r3);
+    r = {0x00, 0x40, 0x00, 0x13};
+    writePLL(r.data());
 
     // write R2
-    uint8_t r2[] = {0x18, 0x00, 0x5F, 0xC2};
-    writePLL(r2);
+    r = {0x18, 0x00, 0x5F, 0xC2};
+    writePLL(r.data());
 
     setupSi5351();
 }

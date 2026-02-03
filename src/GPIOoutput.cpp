@@ -80,20 +80,26 @@ void Ctcss::update(TrxState &trxState)
 {
     if (!trxState.isCtcssOn())
     {
-        if (on) setOff();
+        if (on)
+        {
+            setOff();
+        }
     }
     else // CTCSS on
     {
         double frequency = trxState.getCtcssFrequency();
-        if ((frequency != this->frequency) || !on) setOn(frequency);
+        if ((frequency != this->frequency) || !on)
+        {
+            setOn(frequency);
+        }
     }
 }
 
-void Ctcss::setOn(const double frequency)
+void Ctcss::setOn(const float frequency)
 {
     const auto sysClock = clock_get_hz(clk_sys);
-    const uint cycles = 180;
-    const double clkDiv = sysClock / (frequency * cycles);
+    constexpr uint cycles = 180;
+    const float clkDiv = sysClock / (frequency * cycles);
     pio_sm_set_clkdiv(CTCSS_PIO, ctcssSm, clkDiv);
     pio_sm_set_enabled(CTCSS_PIO, ctcssSm, true);  
     this->frequency = frequency;
