@@ -3,6 +3,8 @@
 #include "I2Cinput.h"
 #include "GPIOinput.h"
 
+using enum mode;
+
 TrxStateVfo::TrxStateVfo(I2Cinput& i2cInput, uint32_t rxFrequency)
 :TrxState(i2cInput)
 {

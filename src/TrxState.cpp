@@ -3,6 +3,8 @@
 #include "settings.h"
 #include "GPIOinput.h"
 
+using enum mode;
+
 TrxState::TrxState(I2Cinput& i2cInput)
 :i2cInput(i2cInput)
 {}

@@ -31,6 +31,8 @@ constexpr uint8_t I2C_ADDR_SI5351A = 0x62; // 0x60, sometimes 0x62
 
 void setTxAllowed(const bool allowed, const uint pttSm);
 
+using enum mode;
+
 int main()
 {
 

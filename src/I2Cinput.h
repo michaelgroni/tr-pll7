@@ -4,14 +4,15 @@
 
 #include "pico/stdlib.h"
 #include "hardware/i2c.h"
-#include <string>
+#include <string_view>
 
-enum mode {usb, lsb, fm2, ctcss};
+enum class mode {usb, lsb, fm2, ctcss};
 // For the control unit CW ist the same as USB.
 // The FM1 postion of the switch is used for CTCSS.
 
-constexpr std::string mode2String(const mode m)
+constexpr std::string_view mode2String(const mode m)
 {
+    using enum mode;
     switch (m)
     {
     case usb:
@@ -21,9 +22,8 @@ constexpr std::string mode2String(const mode m)
     case fm2:
     case ctcss:
         return "FM";
-    default:
-        return "unknown mode";
     }
+    return "unknown mode";
 }
 
 class I2Cinput

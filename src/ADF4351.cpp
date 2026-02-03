@@ -20,7 +20,9 @@ constexpr uint32_t F_XO_SI{25'000'000}; // 25 MHz or 27 MHz
 // constexpr uint8_t M_MULTISYNTH_MAX{90}; // should be even
 constexpr uint32_t PFD_ADF{10'000'000};
 constexpr uint8_t R_ADF{1};
+
 using namespace std;
+using enum mode;
 
 void ADF4351::write(const uint32_t frequency)
 {

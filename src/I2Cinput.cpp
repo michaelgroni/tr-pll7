@@ -2,6 +2,8 @@
 
 #include "hardware/timer.h"
 
+using enum mode;
+
 I2Cinput::I2Cinput(i2c_inst* i2cPort)
 :i2cPort(i2cPort)
 {}
