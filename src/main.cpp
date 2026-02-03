@@ -262,6 +262,7 @@ int main()
 
         // update peripherals
         display.update(*currentState, scanner);
+        Ctcss::getInstance()->update(*currentState);
 
         if (currentState->getCurrentFrequency() != 0) // no unused memory channel
         {
