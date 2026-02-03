@@ -52,9 +52,13 @@ void ADF4351::write(const uint32_t frequency)
         }
         else
         {
-            uint8_t r4[] = {0x00, 0x36, 0x44, 0x34};
+            uint8_t r4[] = {0x00, 0x36, 0x44, 0x2C};
             writePLL(r4);
         }
+
+        // write R1
+        uint8_t r1[] = {0x00, 0x00, 0x83, 0x21};
+        writePLL(r1);
 
         // write R0
         uint32_t r0value = static_cast<uint32_t>(nADF) << 15;
@@ -92,10 +96,6 @@ ADF4351::ADF4351(I2Cinput &i2cInput, i2c_inst_t *i2cSi5351, const uint8_t i2cAdd
     // write R2
     uint8_t r2[] = {0x18, 0x00, 0x5F, 0xC2};
     writePLL(r2);
-
-    // write R1
-    uint8_t r1[] = {0x00, 0x00, 0x83, 0x21};
-    writePLL(r1);
 
     setupSi5351();
 }

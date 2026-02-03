@@ -1,5 +1,5 @@
 #include "Display.h"
-
+#include "I2Cinput.h"
 #include "TrxStateVfo.h"
 #include "TrxStateSpecialMemory.h"
 #include "TrxStateScanMin.h"
@@ -120,10 +120,16 @@ void Display::update(TrxState &trxState, const Scanner &scanner)
             newLine3 = "Mem " + s.str();
         }
     }
+    else if (tsv != nullptr) // VFO
+    {
+        newLine3 = mode2String( trxState.getI2Cinput().getMode() );
+    }
     else if (scanner.isOn())
     {
         newLine3 = "scan";
     }
+
+
 
     setLine3(newLine3);
 
