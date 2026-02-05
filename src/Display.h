@@ -21,9 +21,9 @@ private:
 
     pico_ssd1306::SSD1306 oled;
 
-    void drawDigit(uint8_t x, uint8_t y, uint digit);
+    void drawDigit(const uint8_t x, const uint8_t y, const uint digit);
     void setFrequency(const uint32_t frequency);
     void setLine2(const std::string line2);
-    void setLine3(const std::string line2);
+    void setLine3(const std::string line3);
     void setInfoNortheast(const char c);
 };

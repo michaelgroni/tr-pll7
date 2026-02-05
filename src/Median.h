@@ -16,5 +16,5 @@ public:
     Median(size_t filterSize); 
     void setSize(size_t filterSize);
     void filter(uint_fast8_t &sample);
-    static size_t getMaxSize() {return 20;};
+    static constexpr size_t getMaxSize() {return 20;};
 };

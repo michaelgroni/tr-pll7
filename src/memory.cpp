@@ -27,7 +27,7 @@ void flashInit()
             tempData[i].isUsed = false;
         }
 
-        auto interruptState = save_and_disable_interrupts();
+        const auto interruptState = save_and_disable_interrupts();
 
         // write unique id
         flash_range_erase(MY_FLASH_OFFSET, FLASH_SECTOR_SIZE);             // erase 1 sector = 4096 bytes
@@ -51,7 +51,7 @@ uint32_t scanMax()
     return flashData[0].txFrequency;
 }
 
-void saveScanMin(uint32_t frequency)
+void saveScanMin(const uint32_t frequency)
 {
     Piezo::getInstance()->beepWriteOK();
     
@@ -60,13 +60,13 @@ void saveScanMin(uint32_t frequency)
 
     tempData[0].rxFrequency = frequency;
 
-    auto interruptState = save_and_disable_interrupts();
+    const auto interruptState = save_and_disable_interrupts();
     flash_range_erase(MY_FLASH_DATA, FLASH_SECTOR_SIZE); // erase 1 sector = 4096 bytes
     flash_range_program(MY_FLASH_DATA, (uint8_t *)tempData, 4096);
     restore_interrupts(interruptState);
 }
 
-void saveScanMax(uint32_t frequency)
+void saveScanMax(const uint32_t frequency)
 {
     Piezo::getInstance()->beepWriteOK();
 
@@ -75,7 +75,7 @@ void saveScanMax(uint32_t frequency)
 
     tempData[0].txFrequency = frequency;
 
-    auto interruptState = save_and_disable_interrupts();
+    const auto interruptState = save_and_disable_interrupts();
     flash_range_erase(MY_FLASH_DATA, FLASH_SECTOR_SIZE); // erase 1 sector = 4096 bytes
     flash_range_program(MY_FLASH_DATA, (uint8_t *)tempData, 4096);
     restore_interrupts(interruptState);
@@ -97,7 +97,7 @@ void saveMemory(const size_t memoryIndex, const memory &m)
 
         tempData[memoryIndex] = m;
 
-        auto interruptState = save_and_disable_interrupts();
+        const auto interruptState = save_and_disable_interrupts();
         flash_range_erase(MY_FLASH_DATA, FLASH_SECTOR_SIZE); // erase 1 sector = 4096 bytes
         flash_range_program(MY_FLASH_DATA, (uint8_t *)tempData, 4096);
         restore_interrupts(interruptState);
@@ -120,7 +120,7 @@ void deleteMemory(const size_t memoryIndex)
 
         tempData[memoryIndex].isUsed = false;
 
-        auto interruptState = save_and_disable_interrupts();
+        const auto interruptState = save_and_disable_interrupts();
         flash_range_erase(MY_FLASH_DATA, FLASH_SECTOR_SIZE); // erase 1 sector = 4096 bytes
         flash_range_program(MY_FLASH_DATA, (uint8_t *)tempData, 4096);
         restore_interrupts(interruptState);

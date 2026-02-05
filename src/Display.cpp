@@ -128,9 +128,6 @@ void Display::update(TrxState &trxState, const Scanner &scanner)
     {
         newLine3 = "scan";
     }
-
-
-
     setLine3(newLine3);
 
     oled.sendBuffer();
@@ -140,7 +137,7 @@ void Display::update(TrxState &trxState, const Scanner &scanner)
     digits 0..9
     height 14, width 8
 */
-void Display::drawDigit(uint8_t x, uint8_t y, uint digit)
+void Display::drawDigit(const uint8_t x, const uint8_t y, const uint digit)
 {
     switch (digit)
     {
@@ -207,7 +204,7 @@ void Display::setFrequency(const uint32_t frequency)
     uint column = 0;
     for (uint i = 1000000000; i >= 10; i /= 10)
     {
-        uint digit = (frequency % i) / (i / 10);
+        const uint digit = (frequency % i) / (i / 10);
         drawDigit(x, 0, digit);
 
         if (column == 2 || column == 5) // thousands point

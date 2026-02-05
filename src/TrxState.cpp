@@ -9,7 +9,7 @@ TrxState::TrxState(I2Cinput& i2cInput)
 :i2cInput(i2cInput)
 {}
 
-uint32_t TrxState::getCurrentFrequency()
+uint32_t TrxState::getCurrentFrequency() const
 {
     if (i2cInput.isPressedPtt())
     {
@@ -47,7 +47,7 @@ unsigned int TrxState::getStep() const
 {
     if (stepIndex==0) // auto
     {
-        auto mode = i2cInput.getMode();
+        const auto mode = i2cInput.getMode();
 
         if ((mode==fm2) || (mode==ctcss))
         {
@@ -85,7 +85,7 @@ bool TrxState::isTxAllowed() const
 }
 
 
-double TrxState::getCtcssFrequency() const
+float TrxState::getCtcssFrequency() const
 {
     return ctcssValues.at(ctcssIndex);
 }

@@ -65,6 +65,7 @@ Ctcss* Ctcss::getInstance()
 }
 
 Ctcss::Ctcss()
+:sysClock(clock_get_hz(clk_sys))
 {
     // setup ctcss pio
     const uint ctcssOffset = pio_add_program(CTCSS_PIO, &ctcss_program);
@@ -87,7 +88,7 @@ void Ctcss::update(TrxState &trxState)
     }
     else // CTCSS on
     {
-        double frequency = trxState.getCtcssFrequency();
+        const double frequency = trxState.getCtcssFrequency();
         if ((frequency != this->frequency) || !on)
         {
             setOn(frequency);
@@ -97,8 +98,6 @@ void Ctcss::update(TrxState &trxState)
 
 void Ctcss::setOn(const float frequency)
 {
-    const auto sysClock = clock_get_hz(clk_sys);
-    constexpr uint cycles = 180;
     const float clkDiv = sysClock / (frequency * cycles);
     pio_sm_set_clkdiv(CTCSS_PIO, ctcssSm, clkDiv);
     pio_sm_set_enabled(CTCSS_PIO, ctcssSm, true);  

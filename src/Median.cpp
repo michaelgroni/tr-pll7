@@ -1,7 +1,6 @@
 #include "Median.h"
 
 #include <algorithm>
-#include <cassert>
 #include <functional>
 #include <numeric>
 
@@ -24,7 +23,7 @@ void Median::filter(uint_fast8_t &sample)
     if (filterSize > 1)
     {
         vector valuesTemp(values);
-        auto median = valuesTemp.begin() + filterSize / 2;
+        const auto median = valuesTemp.begin() + filterSize / 2;
         nth_element(valuesTemp.begin(), median, valuesTemp.end());
 
         sample = *median;

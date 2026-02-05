@@ -18,8 +18,8 @@ struct memory               // 16 bytes
 void flashInit();
 uint32_t scanMin();
 uint32_t scanMax();
-void saveScanMin(uint32_t frequency);
-void saveScanMax(uint32_t frequency);
+void saveScanMin(const uint32_t frequency);
+void saveScanMax(const uint32_t frequency);
 void saveMemory(const size_t memoryIndex, const memory &m);
 void deleteMemory(const size_t memoryIndex);
 

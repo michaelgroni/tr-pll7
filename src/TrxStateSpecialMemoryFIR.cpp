@@ -30,7 +30,7 @@ void TrxStateSpecialMemoryFIR::up(int n)
 
         if (focus == &(config.medianSize))
         {
-            int newSize = (int)config.medianSize + n;
+            const int newSize = (int)config.medianSize + n;
             config.medianSize = std::max(1, newSize);
         }
         else if (focus == &(config.fHigh))
@@ -41,7 +41,7 @@ void TrxStateSpecialMemoryFIR::up(int n)
         }
         else if (focus == &(config.fNotch))
         {
-            int newFNotch = config.fNotch + 10 * n;
+            const int newFNotch = config.fNotch + 10 * n;
             config.fNotch = std::max((int)Fir::getFMin(), newFNotch);
             config.fNotch = std::min(Fir::getFMax(), config.fNotch);
         }

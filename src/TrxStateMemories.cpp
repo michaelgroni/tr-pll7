@@ -63,7 +63,7 @@ void TrxStateMemories::up(int n)
 {
     if (n==0) return;
 
-    int step = n>0 ? 1 : -1;
+    const int step = n>0 ? 1 : -1;
 
     do
     {

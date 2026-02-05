@@ -30,9 +30,12 @@ public:
 private:
     Ctcss();
     uint ctcssSm; // state machine
-    void setOn(const double frequency);
+    void setOn(const float frequency);
     void setOff();
 
-    double frequency = 0;
+    const uint32_t sysClock;
+    const uint cycles {180}; // 180 cycles per wave, see ctcss.pio
+
+    float frequency = 0;
     bool on = false;
 };

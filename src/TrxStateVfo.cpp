@@ -35,7 +35,7 @@ uint32_t TrxStateVfo::getRxFrequency() const
     }
     else
     {
-        auto offset = getI2Cinput().getDuplexOffset();
+        const auto offset = getI2Cinput().getDuplexOffset();
         return rxFrequency + offset;
     }
 }
@@ -44,7 +44,7 @@ uint32_t TrxStateVfo::getTxFrequency() const
 {
     if (!getI2Cinput().isPressedReverse())
     {
-        auto offset = getI2Cinput().getDuplexOffset();
+        const auto offset = getI2Cinput().getDuplexOffset();
         return getRxFrequency() + offset;
     }
     else
@@ -61,9 +61,9 @@ bool TrxStateVfo::isCtcssOn() const
 
 
 
-void TrxStateVfo::up(int n)
+void TrxStateVfo::up(const int n)
 {
-    auto mode = getI2Cinput().getMode();
+    const auto mode = getI2Cinput().getMode();
 
     if (mode != ctcss)
     {
@@ -88,7 +88,7 @@ memory TrxStateVfo::toMemory() const
 }
 
 
-void TrxStateVfo::ctcssUp(int n)
+void TrxStateVfo::ctcssUp(const int n)
 {
     if (n>=0)
     {
@@ -108,7 +108,7 @@ void TrxStateVfo::ctcssUp(int n)
 }
 
 
-void TrxStateVfo::frequencyUp(int n)
+void TrxStateVfo::frequencyUp(const int n)
 {
     if (getStep()<1000000)
     {

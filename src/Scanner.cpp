@@ -72,12 +72,12 @@ void Scanner::update(TrxState *trxState)
     }
 }
 
-void Scanner::setUp(bool up)
+void Scanner::setUp(const bool up)
 {
     this->up = up;
 }
 
-void Scanner::setOn(bool on)
+void Scanner::setOn(const bool on)
 {
     this->on = on;
 }

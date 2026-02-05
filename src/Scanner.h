@@ -13,7 +13,7 @@ private:
 
 public:
     void update(TrxState* trxState);
-    void setUp(bool up);
-    void setOn(bool on);
+    void setUp(const bool up);
+    void setOn(const bool on);
     bool isOn() const;
 };
