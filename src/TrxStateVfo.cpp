@@ -35,8 +35,7 @@ uint32_t TrxStateVfo::getRxFrequency() const
     }
     else
     {
-        const auto offset = getI2Cinput().getDuplexOffset();
-        return rxFrequency + offset;
+        return rxFrequency + getI2Cinput().getDuplexOffset();
     }
 }
 
@@ -44,8 +43,7 @@ uint32_t TrxStateVfo::getTxFrequency() const
 {
     if (!getI2Cinput().isPressedReverse())
     {
-        const auto offset = getI2Cinput().getDuplexOffset();
-        return getRxFrequency() + offset;
+        return getRxFrequency() + getI2Cinput().getDuplexOffset();
     }
     else
     {
