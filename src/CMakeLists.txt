@@ -32,24 +32,12 @@ include(pico_sdk_import.cmake)
 
 project(tr-pll70 C CXX ASM)
 
-# ChatGPT
-if(NOT CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE Debug CACHE STRING "Build type" FORCE)
-endif()
-
-add_compile_options(-Og -g3)
-add_link_options(-g)
-set(PICO_DEOPTIMIZED_DEBUG 1)
-# /ChatGPT
-
 # Initialise the Raspberry Pi Pico SDK
 pico_sdk_init()
 
 # Add executable. Default name is the project name, version 0.1
 
 add_executable(tr-pll70 main.cpp )
-target_compile_options(tr-pll70 PRIVATE -Og -g3) # ChatGPT
-target_link_options(tr-pll70 PRIVATE "LINKER:--defsym=__StackSize=0x8000")   # 32 KiB ChatGPT
 
 pico_set_program_name(tr-pll70 "tr-pll70")
 pico_set_program_version(tr-pll70 "0.3")
@@ -59,8 +47,7 @@ pico_enable_stdio_uart(tr-pll70 0)
 pico_enable_stdio_usb(tr-pll70 0)
 
 # Add the standard library to the build
-target_link_libraries(tr-pll70
-        pico_stdlib)
+target_link_libraries(tr-pll70 pico_stdlib)
 
 # Add the standard include files to the build
 target_include_directories(tr-pll70 PRIVATE
