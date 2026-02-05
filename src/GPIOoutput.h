@@ -4,11 +4,6 @@
 
 #include "TrxState.h"
 
-
-void beepOK(pio_sm_config *c, uint sm);
-void beepWriteOK(pio_sm_config *c, uint sm);
-void beepError(pio_sm_config *c, uint sm);
-
 class Piezo
 {
 public:
