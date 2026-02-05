@@ -85,7 +85,7 @@ bool TrxState::isTxAllowed() const
 }
 
 
-float TrxState::getCtcssFrequency() const
+double TrxState::getCtcssFrequency() const
 {
     return ctcssValues.at(ctcssIndex);
 }
