@@ -17,7 +17,8 @@ private:
     uint32_t frequency = 0;
     std::string line2 = "";
     std::string line3 = "";
-    char infoNortheast = ' ';                        
+    char infoNortheast = ' ';   
+    bool contentChanged = false;                     
 
     pico_ssd1306::SSD1306 oled;
 

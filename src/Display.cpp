@@ -22,6 +22,8 @@ Display::Display(i2c_inst* i2cPort)
 
 void Display::update(TrxState &trxState, const Scanner &scanner)
 {
+    contentChanged = false;
+    
     const TrxStateScanMin *tsmin = dynamic_cast<TrxStateScanMin *>(&trxState);
     const TrxStateScanMax *tsmax = dynamic_cast<TrxStateScanMax *>(&trxState);
     const TrxStateMemories *tsmem = dynamic_cast<TrxStateMemories *>(&trxState);
@@ -130,7 +132,10 @@ void Display::update(TrxState &trxState, const Scanner &scanner)
     }
     setLine3(newLine3);
 
-    oled.sendBuffer();
+    if (contentChanged)
+    {
+        oled.sendBuffer();
+    }
 }
 
 /*
@@ -196,7 +201,13 @@ void Display::drawDigit(const uint8_t x, const uint8_t y, const uint digit)
 
 void Display::setFrequency(const uint32_t frequency)
 {
+    if (this->frequency == frequency)
+    {
+        return;
+    }
+
     this->frequency = frequency;
+    contentChanged = true;
 
     fillRect(&oled, 0, 0, 110, 15, pico_ssd1306::WriteMode::SUBTRACT); // overwrite old content
 
@@ -223,6 +234,12 @@ void Display::setFrequency(const uint32_t frequency)
 
 void Display::setLine2(const std::string line2)
 {
+    if (this->line2 == line2)
+    {
+        return;
+    }
+    
+    contentChanged = true;
     this->line2 = line2;
 
     fillRect(&oled, 0, 17, 128, 24, pico_ssd1306::WriteMode::SUBTRACT); // overwrite old content
@@ -231,6 +248,12 @@ void Display::setLine2(const std::string line2)
 
 void Display::setLine3(const std::string line3)
 {
+    if (this->line3 == line3)
+    {
+        return;
+    }
+    
+    contentChanged = true;
     this->line3 = line3;
 
     fillRect(&oled, 0, 25, 128, 32, pico_ssd1306::WriteMode::SUBTRACT); // overwrite old content
@@ -239,6 +262,12 @@ void Display::setLine3(const std::string line3)
 
 void Display::setInfoNortheast(const char c)
 {
+    if (this->infoNortheast == c)
+    {
+        return;
+    }
+
+    contentChanged = true;
     this->infoNortheast = c;
 
     char cString[2];
