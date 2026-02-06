@@ -48,8 +48,8 @@ inline constexpr uint8_t CONTROL_IC1_ADDR {0x3E}; // PCF8574 0x26; PCF8574A 0x3E
 inline const auto ROTARY_PIO = pio0;
 inline const auto BEEP_PIO = pio0;
 inline const auto CTCSS_PIO = pio1;
-inline const auto PTT_PIO = pio1; // origin 0
-inline const auto R2R_PIO = pio1;
+inline const auto PTT_PIO = pio0; // origin 0
+inline const auto R2R_PIO = pio0;
 
 // PTT pio pins
 inline constexpr uint PTT_OUT_PIN = 9;
@@ -69,5 +69,5 @@ static inline constexpr uint CTCSS_PIN = 20;
 
 // DAC output
 static inline constexpr size_t R2R_SIZE = 8;
-static inline constexpr uint32_t R2R_MASK = 0xFF000;
 static inline constexpr uint_fast8_t R2R_BASE_PIN = 10;
+static constexpr uint32_t R2R_MASK = 0xFFu << R2R_BASE_PIN;

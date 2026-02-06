@@ -56,6 +56,7 @@ void Piezo::beepError()
 
 Ctcss *Ctcss::getInstance()
 {
+    printf("Ctcss::getInstance() called\n");
     static Ctcss instance;
     return &instance;
 }
