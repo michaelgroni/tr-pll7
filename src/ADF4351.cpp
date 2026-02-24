@@ -18,8 +18,6 @@ constexpr uint8_t PLL_OUT_LE = 4;
 
 // SI5351 and ADF4351
 constexpr uint32_t F_XO_SI{25'000'000}; // 25 MHz or 27 MHz
-// constexpr uint8_t M_MULTISYNTH_MIN{60}; // must be even
-// constexpr uint8_t M_MULTISYNTH_MAX{90}; // should be even
 constexpr uint32_t PFD_ADF{10'000'000};
 constexpr uint8_t R_ADF{1};
 
@@ -49,7 +47,7 @@ void ADF4351::write(const uint32_t frequency)
         sleep_ms(1); // wait for Si5351 to be ready
 
         array<uint8_t, 4> r; // ADF451 register
-        
+
         // write R4
         if (!isPttPressed) // more power from the PLL in RX mode
         {
@@ -61,10 +59,6 @@ void ADF4351::write(const uint32_t frequency)
             r = {0x00, 0x36, 0x44, 0x2C};
             writePLL(r.data());
         }
-
-        // write R1
-        r = {0x00, 0x00, 0x83, 0x21};
-        writePLL(r.data());
 
         // write R0
         uint32_t r0value = static_cast<uint32_t>(nADF) << 15;
@@ -91,11 +85,11 @@ ADF4351::ADF4351(I2Cinput &i2cInput, i2c_inst_t *i2cSi5351, const uint8_t i2cAdd
     gpio_put(PLL_OUT_LE, 1);
 
     array<uint8_t, 4> r; // ADF451 register
-    
+
     // write R5
     r = {0x00, 0x58, 0x00, 0x05};
     writePLL(r.data());
-    
+
     // write R3
     r = {0x00, 0x40, 0x00, 0x13};
     writePLL(r.data());
@@ -104,17 +98,23 @@ ADF4351::ADF4351(I2Cinput &i2cInput, i2c_inst_t *i2cSi5351, const uint8_t i2cAdd
     r = {0x18, 0x00, 0x5F, 0xC2};
     writePLL(r.data());
 
+    // write R1
+    r = {0x00, 0x00, 0x83, 0x21};
+    writePLL(r.data());
+
     setupSi5351();
 }
 
 void ADF4351::setupSi5351()
 {
-    si5351.setClkControl(0, false, true, 0, false, 3, 4);
+    si5351.setClkControl(0, false, true, 0, false, 3, 2);
     si5351.setPllInputSource(1);
     si5351.setPllParameters('a', 24, 0, 15);
     si5351.resetPll();
     si5351.setMultisynth0to5parameters(0, 60, 0, 15);
-    si5351.setOutput(0, true);
+    si5351.setOutput(0, true);  // on
+    si5351.setOutput(1, false); // off
+    si5351.setOutput(2, false); // off
 }
 
 uint32_t ADF4351::pllFrequency(uint32_t frequency) const
