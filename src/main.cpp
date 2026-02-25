@@ -32,6 +32,12 @@ using enum mode;
 
 int main()
 {    
+    // force the 3V3 regulator into PWM mode
+    gpio_init(23);
+    gpio_set_dir(23, GPIO_OUT);
+    gpio_put(23, 1);
+
+
     setupI2C(I2C_PORT_IO, I2C_PORT_SI5351A);
 
     setupGPIOinput();

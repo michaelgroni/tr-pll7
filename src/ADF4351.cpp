@@ -44,6 +44,7 @@ void ADF4351::write(const uint32_t frequency)
         si5351.resetPll('a');
         si5351.setMultisynth0to5parameters(0, bestM, 0, 1);
 
+
         sleep_ms(1); // wait for Si5351 to be ready
 
         array<uint8_t, 4> r; // ADF451 register
