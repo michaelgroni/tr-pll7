@@ -54,3 +54,9 @@ Connect the TX OFFSET switch to K2 on the CONTROL UNIT.
     | original                          | 27 Ohm | 470 pF |
     | recommended if power is too low   | 47 Ohm | 33 pF  |
     | very low PLL power                | ∞      | 10 pF  |
+
+## Adjusting the CONTROL UNIT
+1. Measure the DC voltage U0 at TP1 during reception mode and with the squelch closed. It must be close to 1.25 volts.
+2. When receiving FM on a free frequency and with the squelch open, the noise at TP1 should neither exceed 2.5 volts nor be cut off at the bottom. Set R4 to a position just within the limits.
+3. Adjust R43 so that the filtered and unfiltered signals are perceived as having the same volume.
+4. R35 determines the volume of the CTCSS tone.  
