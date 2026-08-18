@@ -55,7 +55,7 @@ void ADF4351::write(const uint32_t frequency)
             r = {0x00, 0x36, 0x44, 0x3C};
             writePLL(r.data());
         }
-        else
+        else // TX
         {
             r = {0x00, 0x36, 0x44, 0x2C};
             writePLL(r.data());
@@ -96,11 +96,11 @@ ADF4351::ADF4351(I2Cinput &i2cInput, i2c_inst_t *i2cSi5351, const uint8_t i2cAdd
     writePLL(r.data());
 
     // write R2
-    r = {0x18, 0x00, 0x5F, 0xC2};
+    r = {0x18, 0x00, 0x41, 0xC2};
     writePLL(r.data());
 
     // write R1
-    r = {0x00, 0x00, 0x83, 0x21};
+    r = {0x00, 0x00, 0x80, 0x11};
     writePLL(r.data());
 
     setupSi5351();
@@ -108,7 +108,7 @@ ADF4351::ADF4351(I2Cinput &i2cInput, i2c_inst_t *i2cSi5351, const uint8_t i2cAdd
 
 void ADF4351::setupSi5351()
 {
-    si5351.setClkControl(0, false, true, 0, false, 3, 2);
+    si5351.setClkControl(0, false, true, 0, false, 3, 8);
     si5351.setPllInputSource(1);
     si5351.setPllParameters('a', 24, 0, 15);
     si5351.resetPll();

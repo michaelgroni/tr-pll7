@@ -30,7 +30,7 @@ bool timerHandler(struct repeating_timer* t)
 	int16_t sample;
 	sample = adc_read();
 	// bandpass.filter(sample);
-	pio_sm_put(R2R_PIO, stateMachineR2R, static_cast<uint32_t>(sample));
+	pio_sm_put(R2R_PIO, stateMachineR2R, static_cast<uint32_t>(sample >> 8)); // 8 bit output
 	return true;
 }
 
