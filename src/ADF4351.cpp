@@ -62,7 +62,7 @@ void ADF4351::write(const uint32_t frequency)
         }
 
         // write R0
-        uint32_t r0value = static_cast<uint32_t>(nADF) << 15;
+        uint32_t r0value{static_cast<uint32_t>(nADF) << 15};
         uint8_t *fake8bit = (uint8_t *)&r0value;
         for (size_t i = 0; i < 4; i++)
         {
@@ -100,7 +100,7 @@ ADF4351::ADF4351(I2Cinput &i2cInput, i2c_inst_t *i2cSi5351, const uint8_t i2cAdd
     writePLL(r.data());
 
     // write R1
-    r = {0x00, 0x00, 0x80, 0x11};
+    r = {0x00, 0x00, 0x80, 0x09};
     writePLL(r.data());
 
     setupSi5351();
@@ -108,7 +108,7 @@ ADF4351::ADF4351(I2Cinput &i2cInput, i2c_inst_t *i2cSi5351, const uint8_t i2cAdd
 
 void ADF4351::setupSi5351()
 {
-    si5351.setClkControl(0, false, true, 0, false, 3, 8);
+    si5351.setClkControl(0, false, true, 0, false, 3, 2);
     si5351.setPllInputSource(1);
     si5351.setPllParameters('a', 24, 0, 15);
     si5351.resetPll();
