@@ -75,6 +75,8 @@ void ADF4351::write(const uint32_t frequency)
 ADF4351::ADF4351(I2Cinput &i2cInput, i2c_inst_t *i2cSi5351, const uint8_t i2cAddrSi5351)
     : i2cInput(i2cInput), i2cSi5351(i2cSi5351), si5351(i2cSi5351, i2cAddrSi5351)
 {
+    setupSi5351();
+
     // SPI only TX
     gpio_set_function(PLL_SPI_SCK, GPIO_FUNC_SPI);
     gpio_set_function(PLL_SPI_TX, GPIO_FUNC_SPI);
@@ -91,28 +93,30 @@ ADF4351::ADF4351(I2Cinput &i2cInput, i2c_inst_t *i2cSi5351, const uint8_t i2cAdd
     r = {0x00, 0x58, 0x00, 0x05};
     writePLL(r.data());
 
+    // write R4
+    r = {0x00, 0xBF, 0xF4, 0x3C};
+    writePLL(r.data());    
+
     // write R3
-    r = {0x00, 0x40, 0x00, 0x13};
+    r = {0x00, 0xC0, 0x00, 0x13};
     writePLL(r.data());
 
     // write R2
-    r = {0x18, 0x00, 0x41, 0xC2};
+    r = {0x18, 0x00, 0x61, 0xC2};
     writePLL(r.data());
 
     // write R1
-    r = {0x00, 0x00, 0x80, 0x09};
+    r = {0x00, 0x00, 0x80, 0x11};
     writePLL(r.data());
-
-    setupSi5351();
 }
 
 void ADF4351::setupSi5351()
 {
     si5351.setClkControl(0, false, true, 0, false, 3, 2);
     si5351.setPllInputSource(1);
-    si5351.setPllParameters('a', 24, 0, 15);
+    si5351.setPllParameters('a', 36, 0, 1025);
     si5351.resetPll();
-    si5351.setMultisynth0to5parameters(0, 60, 0, 15);
+    si5351.setMultisynth0to5parameters(0, 10, 0, 15);
     si5351.setOutput(0, true);  // on
     si5351.setOutput(1, false); // off
     si5351.setOutput(2, false); // off
