@@ -34,18 +34,18 @@ void ADF4351::write(const uint32_t frequency)
         isPttPressed = i2cInput.isPressedPtt();
 
         // Si5351 PLL_A
-        ImproperFractionSi5351 nPLL(F_XO_SI, R_ADF, PFD_ADF, fPll);
-        const auto bestM = nPLL.getM();
-        const auto na = nPLL.getA();
-        const auto nb = nPLL.getB(); // 20 bits
-        const auto nc = nPLL.getC(); // 20 bits
-        const auto nADF = nPLL.getNADF();
+
+        // fMultisynth = fPll * 8 / 41;
+        // f_PLL_Si = fMultisynth * 10 = fPll * 80 / 41
+        // n_PLL_Si = f_PLL_Si / F_XO_SI = fPll * 80 / (41 * F_XO_SI)
+        
+        const uint8_t step = 10; // fPll in steps of 10 Hz
+        const uint32_t nc = (41 * F_XO_SI) / (step * 80); // denominator
+        const uint32_t na = static_cast<uint64_t>(fPll) * 80 / (41 * F_XO_SI); // integer part
+        const uint32_t nb = (static_cast<uint64_t>(fPll) * 80 * nc / (41ull * F_XO_SI)) % nc; // numerator
         si5351.setPllParameters('a', na, nb, nc);
-        si5351.resetPll('a');
-        si5351.setMultisynth0to5parameters(0, bestM, 0, 1);
 
-
-        sleep_ms(1); // wait for Si5351 to be ready
+        sleep_ms(2); // wait for Si5351 to be ready
 
         array<uint8_t, 4> r; // ADF451 register
 
@@ -114,7 +114,7 @@ void ADF4351::setupSi5351()
 {
     si5351.setClkControl(0, false, true, 0, false, 3, 2);
     si5351.setPllInputSource(1);
-    si5351.setPllParameters('a', 36, 0, 1025);
+    si5351.setPllParameters('a', 36, 0, 1281250);
     si5351.resetPll();
     si5351.setMultisynth0to5parameters(0, 10, 0, 15);
     si5351.setOutput(0, true);  // on
